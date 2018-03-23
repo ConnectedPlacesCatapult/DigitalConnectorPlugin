@@ -257,11 +257,29 @@ class DigitalConnectorPlugin:
                 vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
 
+    def clean_json(self, file):
+        with open(file) as f:
+            content = f.readlines()
 
+        jsn = ''    
+        for i in content:
+            if '//' in i:
+                pass
+            else:
+                jsn = jsn+i.replace("/n",'')
+        
+        f = json.loads(jsn)
+        return f
+
+        
     def edit_recipe(self):
-        datasources, updated_content = EditRecipe.getRecipeContent(datasources = "test")
-        # dialog = self.show_dialog()
-        print datasources,updated_content
+        file = '{0}/src/main/resources/executions/examples/{1}'.format(self.dlg.lineEdit.text(),self.track_recipe_choice())
+        datasources_file = self.clean_json(file)
+        updated_datasources = EditRecipe.getRecipeContent(datasources = datasources_file["dataset"]["datasources"])
+        
+        # TODO Do something with the updated datasources
+
+        print updated_datasources
 
 
     def select_output_name(self):
@@ -284,19 +302,7 @@ class DigitalConnectorPlugin:
         dc_recipe = self.track_recipe_choice()
 
         file  = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe)
-        # Clean recipe form comments
-        with open(file) as f:
-            content = f.readlines()
-
-        jsn = ''    
-        for i in content:
-            if '//' in i:
-                pass
-            else:
-                jsn = jsn+i.replace("/n",'')
-
-        f = json.loads(jsn)
-        self.dict2svg(f)
+        self.dict2svg(self.clean_json(file))
     
 
     def traverse(self, obj, parent):

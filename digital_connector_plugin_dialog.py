@@ -55,8 +55,15 @@ class EditRecipe(QtGui.QDialog):
         buttons.rejected.connect(self.reject)
         self.layout.addWidget(buttons)
     
-    def addContent(self, position_x, position_y):
-        return self.layout.addWidget(QtGui.QTextEdit(),position_x,position_y)
+    def addContent(self, position_x, position_y, datasource):
+        widget = QtGui.QTextEdit()
+        widget.setText(datasource)
+        return self.layout.addWidget(widget,position_x,position_y)
+
+    def addDatasourceLabel(self):
+        widget = QtGui.QLabel()
+        widget.setText("Recipe's datasources")
+        return self.layout.addWidget(widget)
 
     def getContent(self):
         updated_content = []
@@ -71,12 +78,18 @@ class EditRecipe(QtGui.QDialog):
     def getRecipeContent(datasources, parent = None):
 
         dialog = EditRecipe(parent)
-        for i in range(1,5):
-            for j in range(1,5):
-                dialog.addContent(i,j)
+        
+        counter = 1
+        for i, j in enumerate(datasources):
+            print i
+            if i > 4:
+                counter = counter+1
+                dialog.addContent(counter, i, str(j))
+            else:
+                dialog.addContent(counter, i, str(j))
+
+        dialog.addDatasourceLabel()
 
         result = dialog.exec_()
-
-        mytext = dialog.getContent()
-        
-        return (datasources, mytext)
+        updated_datasources = dialog.getContent()
+        return updated_datasources
