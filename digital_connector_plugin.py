@@ -275,9 +275,11 @@ class DigitalConnectorPlugin:
     def edit_recipe(self):
         file = '{0}/src/main/resources/executions/examples/{1}'.format(self.dlg.lineEdit.text(),self.track_recipe_choice())
         datasources_file = self.clean_json(file)
-        datasources, updated_content = EditRecipe.getRecipeContent(datasources = datasources_file["dataset"]["datasources"])
-        # dialog = self.show_dialog()
-        print datasources,updated_content
+        updated_datasources = EditRecipe.getRecipeContent(datasources = datasources_file["dataset"]["datasources"])
+        
+        # TODO Do something with the updated datasources
+
+        print updated_datasources
 
 
     def select_output_name(self):

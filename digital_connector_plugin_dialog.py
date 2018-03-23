@@ -60,6 +60,11 @@ class EditRecipe(QtGui.QDialog):
         widget.setText(datasource)
         return self.layout.addWidget(widget,position_x,position_y)
 
+    def addDatasourceLabel(self):
+        widget = QtGui.QLabel()
+        widget.setText("Recipe's datasources")
+        return self.layout.addWidget(widget)
+
     def getContent(self):
         updated_content = []
         items = (self.layout.itemAt(i) for i in range(self.layout.count())) 
@@ -71,13 +76,20 @@ class EditRecipe(QtGui.QDialog):
     # static method that reads the recipe content and returns the updated recipe
     @staticmethod
     def getRecipeContent(datasources, parent = None):
-        dialog = EditRecipe(parent)
-        for i, j in enumerate(datasources):
-            dialog.addContent(i,i, str(j))
 
+        dialog = EditRecipe(parent)
+        
+        counter = 1
+        for i, j in enumerate(datasources):
+            print i
+            if i > 4:
+                counter = counter+1
+                dialog.addContent(counter, i, str(j))
+            else:
+                dialog.addContent(counter, i, str(j))
+
+        dialog.addDatasourceLabel()
 
         result = dialog.exec_()
-
-        mytext = dialog.getContent()
-
-        return (datasources, mytext)
+        updated_datasources = dialog.getContent()
+        return updated_datasources
