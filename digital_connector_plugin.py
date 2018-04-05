@@ -227,10 +227,13 @@ class DigitalConnectorPlugin:
     
     def run(self):
         """Run method that performs all the real work"""
+
         # show the dialog
         self.dlg.show()
+
         # Run the dialog event loop
         result = self.dlg.exec_()
+
         # See if OK was pressed
         if result:
             gradle_command = '/usr/local/Cellar/gradle/4.1/bin/gradle'
@@ -238,10 +241,19 @@ class DigitalConnectorPlugin:
             dc_recipe = self.track_recipe_choice()
             to_save = self.select_output_name()
 
+            # check weather the path corresponds to the examples folder or not. 
+            # This is necessary due to the absolute paths of subprocess
+            chars = set("\/")
+            if any((c in chars) for c in dc_recipe):
+                pass
+            else:
+                dc_recipe = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe,to_save)
+
+            # TODO need to add more error messages
             if not to_save:
                 self.iface.messageBar().pushMessage("Error", "Please choose a name for the output file", level=QgsMessageBar.CRITICAL)
             else:
-                args = ["{0} runExport -Precipe='{1}/src/main/resources/executions/examples/{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
+                args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
                 output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
 
                 progressbar = QProgressBar()
@@ -258,6 +270,8 @@ class DigitalConnectorPlugin:
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
 
     def clean_json(self, file):
+        """ Clean json from comments """
+
         with open(file) as f:
             content = f.readlines()
 
@@ -273,13 +287,22 @@ class DigitalConnectorPlugin:
 
         
     def edit_recipe(self):
-        file = '{0}/src/main/resources/executions/examples/{1}'.format(self.dlg.lineEdit.text(),self.track_recipe_choice())
-        datasources_file = self.clean_json(file)
-        updated_datasources = EditRecipe.getRecipeContent(datasources = datasources_file["dataset"]["datasources"])
-        
-        # TODO Do something with the updated datasources
+        """ Fires up load recipe class and keeps track of the edited result """
 
-        print updated_datasources
+        # get thet recipe
+        file = '{0}/src/main/resources/executions/examples/{1}'.format(self.dlg.lineEdit.text(),self.track_recipe_choice())
+        recipe_file = self.clean_json(file)
+
+        # fire up the edit window
+        updated_recipe, result = EditRecipe.getRecipeContent(datasources = recipe_file["dataset"]["datasources"],
+                                                        subjects = recipe_file["dataset"]["subjects"],
+                                                        fields = recipe_file["dataset"]["fields"])
+        
+        # if it was edited add it to the combobox
+        if result:
+            dc_recipe = self.dlg.comboBox.addItem(updated_recipe)
+        
+        print updated_recipe
 
 
     def select_output_name(self):
@@ -290,6 +313,7 @@ class DigitalConnectorPlugin:
         return name
 
     def track_recipe_choice(self):
+        """ Tracks recipe choice from combobox """
         dc_recipe = str(self.dlg.comboBox.currentText())
         return dc_recipe
 

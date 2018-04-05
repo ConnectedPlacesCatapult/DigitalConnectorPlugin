@@ -1,10 +1,10 @@
 Plugin Builder Results
 
 Your plugin DigitalConnectorPlugin was created in:
-    /Users/tbantis/.qgis2/python/plugins/DigitalConnectorPlugin
+    /your_path_to_qgis/.qgis2/python/plugins/DigitalConnectorPlugin
 
 Your QGIS plugin directory is located at:
-    /Users/tbantis/.qgis2/python/plugins
+     /your_path_to_qgis/.qgis2/python/plugins
 
 What's Next:
 
@@ -19,15 +19,12 @@ What's Next:
 
   * Customize it by editing the implementation file: ``digital_connector_plugin.py``
 
-  * Create your own custom icon, replacing the default icon.png
-
   * Modify your user interface by opening DigitalConnectorPlugin.ui in Qt Designer
 
-  * You can use the Makefile to compile your Ui and resource files when
-    you make changes. This requires GNU make (gmake)
+TODO:
 
-For more information, see the PyQGIS Developer Cookbook at:
-http://www.qgis.org/pyqgis-cookbook/index.html
+  * Investigate the feasibility of implementing collapsable widgets for the nested field structure
+  * Investigate the feasibility of colocoding the recipe's fields
+  * Further extent GUI
+  * ...
 
-(C) 2011-2014 GeoApt LLC - geoapt.com
-Git revision : $Format:%H$

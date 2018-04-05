@@ -24,10 +24,13 @@
 import os
 
 from PyQt4 import QtGui, uic, QtCore
+import json
+from FrameLayout import FrameLayout
+import ast
+import collections
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'digital_connector_plugin_dialog_base.ui'))
-
 
 class DigitalConnectorPluginDialog(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
@@ -44,52 +47,164 @@ class EditRecipe(QtGui.QDialog):
     def __init__(self, parent = None):
         super(EditRecipe, self).__init__(parent)
         
-        # self.layout = QtGui.QVBoxLayout(self)
-        self.layout = QtGui.QGridLayout(self)
+        self.layout = QtGui.QVBoxLayout(self)
+        self.framesubjects = FrameLayout(title="Subjects")
+        self.framedatasources = FrameLayout(title="Datasources")
+        self.framefields = FrameLayout(title="Fields")
+
+        # self.layout = QtGui.QGridLayout(self)
 
         # OK and Cancel buttons
         buttons = QtGui.QDialogButtonBox(
-            QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel,
+            QtGui.QDialogButtonBox.Save | QtGui.QDialogButtonBox.Cancel,
             QtCore.Qt.Horizontal, self)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         self.layout.addWidget(buttons)
     
-    def addContent(self, position_x, position_y, datasource):
+    def addContentDatasources(self, datasource):
         widget = QtGui.QTextEdit()
         widget.setText(datasource)
-        return self.layout.addWidget(widget,position_x,position_y)
+        self.framedatasources.addWidget(widget)
+        return self.layout.addWidget(self.framedatasources)
 
-    def addDatasourceLabel(self):
-        widget = QtGui.QLabel()
-        widget.setText("Recipe's datasources")
-        return self.layout.addWidget(widget)
+    def addContentSubjects(self, subjects):
+        widget = QtGui.QTextEdit()
+        widget.setText(subjects)
 
-    def getContent(self):
+        # Example of how to use colocoding?
+
+        # redColor = QtGui.QColor(255, 0, 0)
+        # blueColor = QtGui.QColor(0, 0, 255)
+        # blackColor = QtGui.QColor(0, 0, 0)
+        # d = ast.literal_eval(subjects)
+        # widget.insertPlainText("{")
+        # for key, value in d.iteritems():
+        #     widget.setTextColor(redColor)
+        #     widget.append('"'+key+'" : ')
+        #     widget.setTextColor(blueColor)
+        #     if isinstance(value, dict):
+        #         widget.setTextColor(blackColor)
+        #         widget.append("     {")
+        #         for key2, value2 in value.iteritems():
+        #             widget.setTextColor(redColor)
+        #             widget.append('     "'+key2+'" : ')
+        #             widget.setTextColor(blueColor)
+        #             widget.insertPlainText('"'+value2+'"')
+        #         widget.setTextColor(blackColor)
+        #         widget.append("     }")
+        #     else:
+        #         widget.setTextColor(blueColor)
+        #         widget.insertPlainText('"'+value+'"')    
+
+        # widget.setTextColor(blackColor)
+        # widget.append("}")
+
+        self.framesubjects.addWidget(widget)
+        return self.layout.addWidget(self.framesubjects)
+
+    def addContentFields(self, fields):
+        widget = QtGui.QTextEdit()
+        widget.setText(fields)
+        self.framefields.addWidget(widget)
+        return self.layout.addWidget(self.framefields)
+
+    def nested_dict_iter(self, d):
+        stack = d.items()
+        while stack:
+            k, v = stack.pop()
+            if isinstance(v, dict):
+                print(k)
+                stack.extend(v.iteritems())
+            else:
+                print("%s: %s" % (k, v))
+        
+    # def addDatasourceLabel(self):
+    #     widget = QtGui.QLabel()
+    #     widget.setText("Recipe's datasources")
+    #     return self.layout.addWidget(widget)
+
+    # def addSubjectsLabel(self):
+    #     widget = QtGui.QLabel()
+    #     widget.setText("Recipe's subjects")
+    #     return self.layout.addWidget(widget)
+
+    def getContentDatasources(self):
         updated_content = []
-        items = (self.layout.itemAt(i) for i in range(self.layout.count())) 
+        # items = (self.layout.itemAt(i) for i in range(self.layout.count())) 
+        items =  self.framedatasources.getWidget()
         for i in items:
             if isinstance(i.widget(), QtGui.QTextEdit):
                 updated_content.append(i.widget().toPlainText())
         return updated_content
 
+    def getContentFields(self):
+        updated_content = []
+        items =  self.framefields.getWidget()
+        for i in items:
+            if isinstance(i.widget(), QtGui.QTextEdit):
+                updated_content.append(i.widget().toPlainText())
+        return updated_content
+
+    def getContentSubjects(self):
+        updated_content = []
+        items =  self.framesubjects.getWidget()
+        for i in items:
+            if isinstance(i.widget(), QtGui.QTextEdit):
+                updated_content.append(i.widget().toPlainText())
+        return updated_content
+
+
     # static method that reads the recipe content and returns the updated recipe
     @staticmethod
-    def getRecipeContent(datasources, parent = None):
+    def getRecipeContent(datasources,subjects,fields, parent = None):
 
         dialog = EditRecipe(parent)
         
-        counter = 1
+        for i, j in enumerate(subjects):
+            dialog.addContentSubjects(json.dumps(j,indent=4, sort_keys=True))
         for i, j in enumerate(datasources):
-            print i
-            if i > 4:
-                counter = counter+1
-                dialog.addContent(counter, i, str(j))
-            else:
-                dialog.addContent(counter, i, str(j))
+            dialog.addContentDatasources(json.dumps(j,indent=4, sort_keys=True))
+        for i, j in enumerate(fields):
+            dialog.addContentFields(json.dumps(j,indent=4, sort_keys=True))
 
-        dialog.addDatasourceLabel()
+        # dialog.addSubjectsLabel()
+        # dialog.addDatasourceLabel()
 
+
+
+        # execute the window and check whether Save was pushed
         result = dialog.exec_()
-        updated_datasources = dialog.getContent()
-        return updated_datasources
+
+        if result:
+            # get the updated contents
+            updated_datasources = dialog.getContentDatasources()
+            updated_fields = dialog.getContentFields()
+            updated_subjects = dialog.getContentSubjects()
+
+            # remove pretty print 
+            updated_datasources = [i.replace("\n","").replace(" ","") for i in updated_datasources]
+            updated_fields = [i.replace("\n","").replace(" ","") for i in updated_fields]
+            updated_subjects = [i.replace("\n","").replace(" ","") for i in updated_subjects]
+
+            updated_recipe = ( '{"dataset": {'
+                '"subjects": ['+','.join(str(e) for e in updated_subjects)+'],'
+                '"datasources": ['+','.join(str(e) for e in updated_datasources)+'],'
+                '"fields": ['+','.join(str(e) for e in updated_fields)+']'
+                '},'
+                '"exporter": "uk.org.tombolo.exporter.GeoJsonExporter"}'
+            )
+
+            # make a prompt dialog box for savinhg the edited recipe
+            output_recipe = QtGui.QFileDialog.getSaveFileName(dialog,  'Save File')
+
+            # save it and keep track of the file path
+            with open(output_recipe, 'w') as outfile:
+                outfile.write(updated_recipe)
+
+            # updated_recipe = updated_subjects + updated_datasources + updated_fields
+            # updated_recipe = ','.join(str(e) for e in updated_recipe)
+        else:
+            output_recipe = []
+
+        return output_recipe, result
