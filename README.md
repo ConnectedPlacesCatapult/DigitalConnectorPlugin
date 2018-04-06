@@ -1,4 +1,10 @@
-Plugin Builder Results
+# Tombolo Digital Connector QGIS plugin
+## Introduction
+TODO
+## Deployment
+TODO
+## Usage
+TODO 
 
 Your plugin DigitalConnectorPlugin was created in:
     /your_path_to_qgis/.qgis2/python/plugins/DigitalConnectorPlugin
