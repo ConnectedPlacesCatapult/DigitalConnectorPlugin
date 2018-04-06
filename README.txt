@@ -24,7 +24,6 @@ What's Next:
 TODO:
 
   * Investigate the feasibility of implementing collapsable widgets for the nested field structure
-  * Investigate the feasibility of colocoding the recipe's fields
   * Further extent GUI
   * ...
 
