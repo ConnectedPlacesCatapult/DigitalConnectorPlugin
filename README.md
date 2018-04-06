@@ -1,7 +1,9 @@
 # Tombolo Digital Connector QGIS plugin
-## Introduction
-TODO
-## Deployment
+A plugin for viewing, modifying and running Tombolo Digital Connector QGIS plugin. 
+
+## Installation
+# Prerequisites
+
 TODO
 ## Usage
 TODO 
