@@ -1,5 +1,7 @@
 # Tombolo Digital Connector QGIS plugin
-A plugin for viewing, modifying and running Tombolo Digital Connector QGIS plugin. 
+A plugin for viewing, modifying and running Tombolo Digital Connector QGIS plugin. Tombolo Digital Connector is an open source software that allows automatic fetching, cleaning and combining spatial data from different sources and different specifications. For more information please visit [Digital Connector](https://github.com/FutureCitiesCatapult/TomboloDigitalConnector). 
+
+
 
 ## Installation
 # Prerequisites
