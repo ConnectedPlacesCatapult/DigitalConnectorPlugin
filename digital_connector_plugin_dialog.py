@@ -28,6 +28,10 @@ import json
 from FrameLayout import FrameLayout
 import ast
 import collections
+import json
+from pygments import highlight
+from pygments.lexers import JsonLexer
+from pygments.formatters import HtmlFormatter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'digital_connector_plugin_dialog_base.ui'))
@@ -64,48 +68,35 @@ class EditRecipe(QtGui.QDialog):
     
     def addContentDatasources(self, datasource):
         widget = QtGui.QTextEdit()
-        widget.setText(datasource)
+        # widget.setText(datasource)
+
+        # Example of how to use colocoding?
+        json_object = json.loads(str(datasource).replace("'",'"'))
+        json_str = json.dumps(json_object, indent=4, sort_keys=True)
+        widget.setText((highlight(json_str, JsonLexer(), HtmlFormatter(noclasses=True))))
+
         self.framedatasources.addWidget(widget)
         return self.layout.addWidget(self.framedatasources)
 
     def addContentSubjects(self, subjects):
         widget = QtGui.QTextEdit()
-        widget.setText(subjects)
+        # widget.setText(subjects)
 
-        # Example of how to use colocoding?
-
-        # redColor = QtGui.QColor(255, 0, 0)
-        # blueColor = QtGui.QColor(0, 0, 255)
-        # blackColor = QtGui.QColor(0, 0, 0)
-        # d = ast.literal_eval(subjects)
-        # widget.insertPlainText("{")
-        # for key, value in d.iteritems():
-        #     widget.setTextColor(redColor)
-        #     widget.append('"'+key+'" : ')
-        #     widget.setTextColor(blueColor)
-        #     if isinstance(value, dict):
-        #         widget.setTextColor(blackColor)
-        #         widget.append("     {")
-        #         for key2, value2 in value.iteritems():
-        #             widget.setTextColor(redColor)
-        #             widget.append('     "'+key2+'" : ')
-        #             widget.setTextColor(blueColor)
-        #             widget.insertPlainText('"'+value2+'"')
-        #         widget.setTextColor(blackColor)
-        #         widget.append("     }")
-        #     else:
-        #         widget.setTextColor(blueColor)
-        #         widget.insertPlainText('"'+value+'"')    
-
-        # widget.setTextColor(blackColor)
-        # widget.append("}")
+        json_object = json.loads(str(subjects).replace("'",'"'))
+        json_str = json.dumps(json_object, indent=4, sort_keys=True)
+        widget.setText((highlight(json_str, JsonLexer(), HtmlFormatter(noclasses=True))))
 
         self.framesubjects.addWidget(widget)
         return self.layout.addWidget(self.framesubjects)
 
     def addContentFields(self, fields):
         widget = QtGui.QTextEdit()
-        widget.setText(fields)
+        # widget.setText(fields)
+
+        json_object = json.loads(str(fields).replace("'",'"'))
+        json_str = json.dumps(json_object, indent=4, sort_keys=True)
+        widget.setText((highlight(json_str, JsonLexer(), HtmlFormatter(noclasses=True))))
+
         self.framefields.addWidget(widget)
         return self.layout.addWidget(self.framefields)
 
