@@ -35,5 +35,6 @@ TODO:
 
   * Investigate the feasibility of implementing collapsable widgets for the nested field structure
   * Further extent GUI
+  * Print terminal info on execution window
   * ...
 
