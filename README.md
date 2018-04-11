@@ -46,7 +46,7 @@ Currently the plugin is not on QGIS Python Plugins Repository. To install it:
 
 ![Alt text](/img/9.png)
 
-* By clicking the **Run** button the Digital Connectr's command ``gradle -runExport`` is invoked.  
+* By clicking the **Run** button the Digital Connector's command ``gradle -runExport`` is invoked.  
 
 ![Alt text](/img/5.png)
 
