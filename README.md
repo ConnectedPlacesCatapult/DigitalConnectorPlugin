@@ -1,4 +1,18 @@
-Plugin Builder Results
+# Tombolo Digital Connector QGIS plugin
+A plugin for viewing, modifying and running Tombolo Digital Connector QGIS plugin. Tombolo Digital Connector is an open source software that allows automatic fetching, cleaning and combining spatial data from different sources and different specifications. For more information please visit [Digital Connector](https://github.com/FutureCitiesCatapult/TomboloDigitalConnector). 
+
+NOTE - This repo is under development. There may be bugs.
+
+## Installation
+Currently the plugin is not on QGIS Python Plugins Repository. To install it:
+* Clone the repo in /your_path_to_qgis/.qgis2/python/plugins
+* Compile the resources file using pyrcc4
+```pyrcc4 resources.py resources.qrc ```
+* Run the tests (``make test``)
+* Test the plugin by enabling it in the QGIS plugin manager
+
+## Usage
+TODO 
 
 Your plugin DigitalConnectorPlugin was created in:
     /your_path_to_qgis/.qgis2/python/plugins/DigitalConnectorPlugin
@@ -25,5 +39,6 @@ TODO:
 
   * Investigate the feasibility of implementing collapsable widgets for the nested field structure
   * Further extent GUI
+  * Print terminal info on execution window
   * ...
 
