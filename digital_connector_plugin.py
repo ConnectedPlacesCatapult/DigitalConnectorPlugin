@@ -307,7 +307,7 @@ class DigitalConnectorPlugin:
         
     def edit_recipe(self):
         """ Fires up load recipe class and keeps track of the edited result """
-        get_gradle_dir(self)
+        self.get_gradle_dir()
         # get thet recipe
         file = '{0}/src/main/resources/executions/examples/{1}'.format(self.dlg.lineEdit.text(),self.track_recipe_choice())
         recipe_file = self.clean_json(file)
