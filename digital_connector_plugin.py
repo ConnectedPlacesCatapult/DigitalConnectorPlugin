@@ -43,7 +43,7 @@ import json
 import fileinput
 import subprocess as sp
 import uuid
-import os
+import platform
 
 class DigitalConnectorPlugin:
     """QGIS Plugin Implementation."""
