@@ -11,8 +11,22 @@ NOTE - This repo is under development. There may be bugs.
 
 ## Installation
 Currently the plugin is not on QGIS Python Plugins Repository. To install it:
+
+
 * Clone the repo in /your_path_to_qgis/.qgis2/python/plugins
-* Compile the resources file using pyrcc4
+
+If you are on **Windows** and sssuming you have installed QGIS2.x on your computer:
+* Launch OSGeo4W Shell by typing ``osgeo4w`` in Windows finder
+![Alt text](/img/osgeo4.png)
+* Navigate to the QGIS plugin folder by typing 
+``cd Users\your_name\.qgis2\python\plugins\DigitalConnectorPlugin``
+![Alt text](/img/cd.png)
+* Compile the plugin by typing 
+``pyrcc4 -o resources.py resources.qrc``
+![Alt text](/img/compile.png)
+
+If you are on **Mac**
+* Compile the resources file using pyrcc4 by typing in the terminal window
 ```pyrcc4 resources.py resources.qrc ```
 * Run the tests (``make test``)
 * Test the plugin by enabling it in the QGIS plugin manager
