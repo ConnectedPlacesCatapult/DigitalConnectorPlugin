@@ -224,7 +224,26 @@ class DigitalConnectorPlugin:
                     recipes_list.append(file)
             self.dlg.comboBox.clear()
             self.dlg.comboBox.addItems(recipes_list)
-    
+
+    # Get the path to gradle per os
+    def get_gradle_dir(self):
+        if platform.system() == 'Windows':
+            # Look in both Program Files and Program Files x86
+            for i in os.listdir('C:\\Program Files'):
+                if 'gradle' in i:
+                    print 'C:\\Program Files\\' + i
+                    return 'C:\\Program Files\\' + i
+                else:
+                    pass
+            for j in  os.listdir('C:\\Program Files x86'):
+                if 'gradle' in j:
+                    print 'C:\\Program Files x86\\' + j
+                    return 'C:\\Program Files x86\\' + j
+                else:
+                    pass              
+                    
+             
+
     def run(self):
         """Run method that performs all the real work"""
 
@@ -288,7 +307,7 @@ class DigitalConnectorPlugin:
         
     def edit_recipe(self):
         """ Fires up load recipe class and keeps track of the edited result """
-
+        get_gradle_dir(self)
         # get thet recipe
         file = '{0}/src/main/resources/executions/examples/{1}'.format(self.dlg.lineEdit.text(),self.track_recipe_choice())
         recipe_file = self.clean_json(file)
