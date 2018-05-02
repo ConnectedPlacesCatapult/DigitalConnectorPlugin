@@ -8,6 +8,7 @@ Currently, the Digital Connector QGIS plugin has the following functionalities:
 * It allows visualising the existing/modified recipes in a UML-based format
 
 NOTE - This repo is under development. There may be bugs.
+**NOTE - While this repo is under development we do not accept PRs**
 
 ## Installation
 Currently the plugin is not on QGIS Python Plugins Repository. To install it:
