@@ -242,7 +242,7 @@ class DigitalConnectorPlugin:
                     pass
             for j in  os.listdir('C:\\Program Files x86'):
                 if 'gradle' in j:
-                    gradle_path = 'C:\\Program Files x86\\' + j + '\\bin\'
+                    gradle_path = 'C:\\Program Files x86\\' + j + '\\bin'
                     print gradle_path
                     return gradle_path
                 else:
