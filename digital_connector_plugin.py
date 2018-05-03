@@ -227,21 +227,53 @@ class DigitalConnectorPlugin:
 
     # Get the path to gradle per os
     def get_gradle_dir(self):
+        """Searches for gradle. If not found it asks for user input"""
+
+        gradle_path = None
+        # Windows
         if platform.system() == 'Windows':
             # Look in both Program Files and Program Files x86
             for i in os.listdir('C:\\Program Files'):
                 if 'gradle' in i:
-                    print 'C:\\Program Files\\' + i
-                    return 'C:\\Program Files\\' + i
+                    gradle_path = 'C:\\Program Files\\' + i
+                    return gradle_path
                 else:
                     pass
             for j in  os.listdir('C:\\Program Files x86'):
                 if 'gradle' in j:
-                    print 'C:\\Program Files x86\\' + j
-                    return 'C:\\Program Files x86\\' + j
+                    gradle_path = 'C:\\Program Files x86\\' + j
+                    return gradle_path
                 else:
                     pass              
-                    
+            if gradle_path == None:
+                gradle_path = QFileDialog.getExistingDirectory(
+                        self.dlg,
+                        "Select gradle path",
+                        expanduser("~"),
+                        QFileDialog.ShowDirsOnly
+                    )
+                return  gradle_path
+        # MacOSX 
+        elif platform.system() == 'Darwin':
+            for i in os.listdir('/usr/local/Cellar/'):
+                print i
+                if 'gradle' in i:
+                    gradle_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
+                                    '/' + 'bin/gradle'
+
+                    return gradle_path
+                else:
+                    pass
+            if gradle_path == None:
+                gradle_path = QFileDialog.getExistingDirectory(
+                        self.dlg,
+                        "Select gradle path",
+                        expanduser("~"),
+                        QFileDialog.ShowDirsOnly
+                    )
+                return  gradle_path                   
+        else:
+            print 'currently the plugin only supports Mac and Windows'
              
 
     def run(self):
@@ -255,7 +287,8 @@ class DigitalConnectorPlugin:
 
         # See if OK was pressed
         if result:
-            gradle_command = '/usr/local/Cellar/gradle/4.1/bin/gradle'
+            # gradle_command = '/usr/local/Cellar/gradle/4.1/bin/gradle'
+            gradle_command = self.get_gradle_dir()
             dc_directory = self.dlg.lineEdit.text()
             dc_recipe = self.track_recipe_choice()
             to_save = self.select_output_name()
@@ -307,7 +340,6 @@ class DigitalConnectorPlugin:
         
     def edit_recipe(self):
         """ Fires up load recipe class and keeps track of the edited result """
-        self.get_gradle_dir()
         # get thet recipe
         file = '{0}/src/main/resources/executions/examples/{1}'.format(self.dlg.lineEdit.text(),self.track_recipe_choice())
         recipe_file = self.clean_json(file)
