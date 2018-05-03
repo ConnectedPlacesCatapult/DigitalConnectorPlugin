@@ -307,6 +307,7 @@ class DigitalConnectorPlugin:
                 self.iface.messageBar().pushMessage("Error", "Please choose a name for the output file", level=QgsMessageBar.CRITICAL)
             else:
                 if platform.system() == 'Windows':
+                    print gradle_command
                     os.chdir(gradle_command)
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format('gradle.bat',dc_directory,dc_recipe,to_save)]
                     output = sp.Popen(args, stdout=sp.PIPE, cwd=gradle_command, shell=True)
