@@ -309,9 +309,10 @@ class DigitalConnectorPlugin:
                 if platform.system() == 'Windows':
                     os.chdir(gradle_command)
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format('gradle.bat',dc_directory,dc_recipe,to_save)]
+                    output = sp.Popen(args, stdout=sp.PIPE, cwd=gradle_command, shell=True)
                 else:
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
-                output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                    output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
 
                 progressbar = QProgressBar()
                 progressbar.setMinimum(0)
