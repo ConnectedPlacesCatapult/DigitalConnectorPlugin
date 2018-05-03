@@ -236,12 +236,14 @@ class DigitalConnectorPlugin:
             for i in os.listdir('C:\\Program Files'):
                 if 'gradle' in i:
                     gradle_path = 'C:\\Program Files\\' + i
+                    print gradle_path
                     return gradle_path
                 else:
                     pass
             for j in  os.listdir('C:\\Program Files x86'):
                 if 'gradle' in j:
                     gradle_path = 'C:\\Program Files x86\\' + j
+                    print gradle_path
                     return gradle_path
                 else:
                     pass              
@@ -256,7 +258,6 @@ class DigitalConnectorPlugin:
         # MacOSX 
         elif platform.system() == 'Darwin':
             for i in os.listdir('/usr/local/Cellar/'):
-                print i
                 if 'gradle' in i:
                     gradle_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
                                     '/' + 'bin/gradle'
