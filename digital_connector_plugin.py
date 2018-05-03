@@ -309,7 +309,7 @@ class DigitalConnectorPlugin:
                 if platform.system() == 'Windows':
                     os.environ['PATH'] += ';' + gradle_command
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format('gradle.bat',dc_directory,dc_recipe,to_save)]
-                    output = sp.Popen(args, stdout=sp.PIPE, cwd=gradle_command, shell=True)
+                    output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
                 else:
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
                     output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
