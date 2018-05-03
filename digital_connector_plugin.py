@@ -235,14 +235,14 @@ class DigitalConnectorPlugin:
             # Look in both Program Files and Program Files x86
             for i in os.listdir('C:\\Program Files'):
                 if 'gradle' in i:
-                    gradle_path = 'C:\\Program Files\\' + i + '\\bin\\gradle.bat'
+                    gradle_path = 'C:\\Program Files\\' + i + '\\bin'
                     print gradle_path
                     return gradle_path
                 else:
                     pass
             for j in  os.listdir('C:\\Program Files x86'):
                 if 'gradle' in j:
-                    gradle_path = 'C:\\Program Files x86\\' + j + '\\bin\\gradle.bat'
+                    gradle_path = 'C:\\Program Files x86\\' + j + '\\bin\'
                     print gradle_path
                     return gradle_path
                 else:
@@ -306,7 +306,11 @@ class DigitalConnectorPlugin:
             if not to_save:
                 self.iface.messageBar().pushMessage("Error", "Please choose a name for the output file", level=QgsMessageBar.CRITICAL)
             else:
-                args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
+                if platform.system() == 'Windows':
+                    os.chdir(gradle_command)
+                    args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format('gradle.bat',dc_directory,dc_recipe,to_save)]
+                else:
+                    args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
                 output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
 
                 progressbar = QProgressBar()
