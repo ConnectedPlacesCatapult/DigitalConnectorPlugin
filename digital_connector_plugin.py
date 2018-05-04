@@ -352,10 +352,12 @@ class DigitalConnectorPlugin:
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command + '\\gradle.bat',
                                                                                     dc_directory,dc_recipe,to_save)]
                     print args
-                    output = sp.Popen(args, cwd=dc_directory, shell=True)
+                    output = sp.Popen(args, cwd=dc_directory)
                 else:
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
-                    output = sp.Popen(args, cwd=dc_directory, shell=True)
+                    output = sp.Popen(args,stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                    for log in iter(output.stdout.readline, b''):
+                        sys.stdout.write(str(log) + '\n')
 
                 progressbar = QProgressBar()
                 progressbar.setMinimum(0)
@@ -364,8 +366,7 @@ class DigitalConnectorPlugin:
                 progressbar.setWindowTitle("Running gradle task...")
                 progressbar.show()
 
-                # for log in iter(output.stdout.readline, b''):
-                #     sys.stdout.write(str(log) + '\n')
+
                 # Adding the resulting layer in the map
                 vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
