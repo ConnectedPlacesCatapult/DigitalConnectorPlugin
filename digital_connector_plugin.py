@@ -74,7 +74,7 @@ class DigitalConnectorPlugin:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
-        ## Windows configuration
+        ##### Windows configuration
         # check for JAVA in Program Files
         if platform.system() == 'Windows':
             java_path = None
@@ -110,6 +110,8 @@ class DigitalConnectorPlugin:
             current_execs = os.environ['PATH']
             if not 'Java' in current_execs:
                 os.environ['PATH'] += ';' + java_path
+
+        #####
 
 
 
@@ -333,6 +335,34 @@ class DigitalConnectorPlugin:
             dc_directory = self.dlg.lineEdit.text()
             dc_recipe = self.track_recipe_choice()
             to_save = self.select_output_name()
+
+            # Update DC and QGIS repo
+            if self.dlg.checkBox_2.isChecked():
+                git_path = None
+                if platform.system() == 'Windows':
+                    # Look in both Program Files and Program Files x86
+                    for i in os.listdir('C:\\Program Files'):
+                        if 'git' in i:
+                            git_path = 'C:\\Program Files\\' + i + '\\bin'
+                            # No single quotes allowed in the string on Windows...
+                            output = sp.call('{0} git pull'.format(git_path), cwd=dc_directory)
+                        else:
+                            pass
+                    for j in  os.listdir('C:\\Program Files (x86)'):
+                        if 'git' in j:
+                            git_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
+                            output = sp.call('{0} git pull'.format(git_path), cwd=dc_directory)
+                        else:
+                            pass 
+                    # If all fails ask user             
+                    if git_path == None:
+                        git_path = QFileDialog.getExistingDirectory(
+                                self.dlg,
+                                "Select git path",
+                                expanduser("~"),
+                                QFileDialog.ShowDirsOnly
+                            )
+                        return  gradle_path                   
 
             # check if the path corresponds to the examples folder or not. 
             # This is necessary due to the absolute paths of subprocess
