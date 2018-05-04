@@ -342,14 +342,15 @@ class DigitalConnectorPlugin:
                 if platform.system() == 'Windows':
                     # Look in both Program Files and Program Files x86
                     for i in os.listdir('C:\\Program Files'):
-                        if 'git' in i:
+                        if 'Git' in i:
                             git_path = 'C:\\Program Files\\' + i + '\\bin'
                             # No single quotes allowed in the string on Windows...
                             output = sp.call('{0} git pull'.format(git_path), cwd=dc_directory)
                         else:
                             pass
                     for j in  os.listdir('C:\\Program Files (x86)'):
-                        if 'git' in j:
+                        if 'Git' in j:
+                            print j
                             git_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
                             output = sp.call('{0} git pull'.format(git_path), cwd=dc_directory)
                         else:
@@ -362,7 +363,7 @@ class DigitalConnectorPlugin:
                                 expanduser("~"),
                                 QFileDialog.ShowDirsOnly
                             )
-                        return  gradle_path                   
+                        output = sp.call('{0} git pull'.format(git_path), cwd=dc_directory)               
 
             # check if the path corresponds to the examples folder or not. 
             # This is necessary due to the absolute paths of subprocess
