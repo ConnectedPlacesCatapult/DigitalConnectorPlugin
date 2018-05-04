@@ -86,10 +86,10 @@ class DigitalConnectorPlugin:
                     java_path = java_path_temp
                 else:
                     pass
-            for j in  os.listdir('C:\\Program Files x86'):
+            for j in  os.listdir('C:\\Program Files (x86)'):
                 if 'Java' in j:
-                    java_path_temp = 'C:\\Program Files x86\\' + i 
-                    java_path_temp = 'C:\\Program Files x86\\' + os.listdir(java_path_temp)[0] + '\\bin'
+                    java_path_temp = 'C:\\Program Files (x86)\\' + i 
+                    java_path_temp = 'C:\\Program Files (x86)\\' + os.listdir(java_path_temp)[0] + '\\bin'
                     java_path = java_path_temp
                 else:
                     pass
@@ -102,7 +102,7 @@ class DigitalConnectorPlugin:
             current_execs = os.environ['PATH']
             if not 'Java' in current_execs:
                 os.environ['PATH'] += java_path
-                
+
 
 
 
