@@ -352,6 +352,7 @@ class DigitalConnectorPlugin:
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command + '\\gradle.bat',
                                                                                     dc_directory,dc_recipe,to_save)]
                     print args
+                    print dc_directory
                     output = sp.Popen(args, cwd=dc_directory)
                 else:
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
