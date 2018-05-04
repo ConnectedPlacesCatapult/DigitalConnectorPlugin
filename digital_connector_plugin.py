@@ -82,17 +82,25 @@ class DigitalConnectorPlugin:
             for i in os.listdir('C:\\Program Files'):
                 if 'Java' in i:
                     java_path_temp = 'C:\\Program Files\\' + i 
-                    java_path_temp = 'C:\\Program Files\\' + os.listdir(java_path_temp)[0] + '\\bin'
+                    for k in os.listdir(java_path_temp):
+                        if 'jdk' in k:
+                            java_path_temp = java_path_temp + '\\'  + k + '\\bin'
                     java_path = java_path_temp
                 else:
                     pass
-            for j in  os.listdir('C:\\Program Files (x86)'):
-                if 'Java' in j:
-                    java_path_temp = 'C:\\Program Files (x86)\\' + i 
-                    java_path_temp = 'C:\\Program Files (x86)\\' + os.listdir(java_path_temp)[0] + '\\bin'
-                    java_path = java_path_temp
-                else:
-                    pass
+
+            if java_path != None:
+                pass
+            else:
+                for j in  os.listdir('C:\\Program Files (x86)'):
+                    if 'Java' in j:
+                        java_path_temp = 'C:\\Program Files (x86)\\' + i 
+                        for k in os.listdir(java_path_temp):
+                            if 'jdk' in k:
+                                java_path_temp = java_path_temp + '\\'  + k + '\\bin'
+                        java_path = java_path_temp
+                    else:
+                        pass
             # ERROR cannot find Java installation
             if java_path == None:
                 self.iface.messageBar().pushMessage("Error", "No Java installation found in Program Files. Please install Java", level=QgsMessageBar.CRITICAL)
@@ -101,7 +109,7 @@ class DigitalConnectorPlugin:
             # Add missing PATHs for windows
             current_execs = os.environ['PATH']
             if not 'Java' in current_execs:
-                os.environ['PATH'] += java_path
+                os.environ['PATH'] += ';' + java_path
 
 
 
