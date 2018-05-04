@@ -133,7 +133,8 @@ class DigitalConnectorPlugin:
         self.dlg.pushButton_2.clicked.connect(self.visualise_recipe)
         self.dlg.pushButton_3.clicked.connect(self.edit_recipe)
 
-
+        # Add DC icon
+        self.label_3.setPixmap(QtGui.QPixmap(":/plugins/DigitalConnectorPlugin/dc_icon.png"))
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):

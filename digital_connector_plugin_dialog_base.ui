@@ -130,17 +130,14 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>20</y>
-     <width>261</width>
-     <height>271</height>
+     <x>380</x>
+     <y>150</y>
+     <width>60</width>
+     <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>dc_logo.png</pixmap>
+    <string>TextLabel</string>
    </property>
   </widget>
  </widget>
