@@ -350,10 +350,7 @@ class DigitalConnectorPlugin:
                     else:
                         pass
                     # No single quotes allowed in the string...
-                    args = ['{0} runExport -Precipe="{2}"  -Poutput="{3}"'.format(gradle_command + '\\gradle.bat',
-                                                                                    dc_directory,dc_recipe,to_save)]
-                    print args
-                    output = sp.Popen('{0} runExport -Precipe="{2}"  -Poutput="{3}"'.format(gradle_command + '\\gradle.bat',
+                    output = sp.call('{0} runExport -Precipe="{2}"  -Poutput="{3}"'.format(gradle_command + '\\gradle.bat',
                                                                                     dc_directory,dc_recipe,to_save),
                                                                                      cwd=dc_directory, shell=True)
                 else:
