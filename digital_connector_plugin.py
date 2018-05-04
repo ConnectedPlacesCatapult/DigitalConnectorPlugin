@@ -352,7 +352,11 @@ class DigitalConnectorPlugin:
                     # No single quotes allowed in the string...
                     output = sp.call('{0} runExport -Precipe="{2}"  -Poutput="{3}"'.format(gradle_command + '\\gradle.bat',
                                                                                     dc_directory,dc_recipe,to_save),
-                                                                                     cwd=dc_directory, shell=True)
+                                                                                     cwd=dc_directory)
+                    # Adding the resulting layer in the map
+                    vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
+                    print vlayer
+                    QgsMapLayerRegistry.instance().addMapLayer(vlayer)   
                 else:
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
                     output = sp.Popen(args,stdout=sp.PIPE, cwd=dc_directory, shell=True)
