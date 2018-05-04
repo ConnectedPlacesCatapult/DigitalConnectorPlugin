@@ -134,7 +134,9 @@ class DigitalConnectorPlugin:
         self.dlg.pushButton_3.clicked.connect(self.edit_recipe)
 
         # Add DC icon
-        self.label_3.setPixmap(QtGui.QPixmap(":/plugins/DigitalConnectorPlugin/dc_icon.png"))
+        img_path = self.resolve('dc_logo.png')
+        print img_path
+        self.dlg.label_3.setPixmap(QPixmap(img_path))
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -418,7 +420,6 @@ class DigitalConnectorPlugin:
         
         print updated_recipe
 
-
     def select_output_name(self):
         """Returns the name of the exported geojson"""
         
@@ -430,6 +431,11 @@ class DigitalConnectorPlugin:
         """ Tracks recipe choice from combobox """
         dc_recipe = str(self.dlg.comboBox.currentText())
         return dc_recipe
+
+    def resolve(self, name, basepath=None):
+        if not basepath:
+            basepath = os.path.dirname(os.path.realpath(__file__))
+        return os.path.join(basepath, name)
 
     # Visualing recipe
     def visualise_recipe(self):
