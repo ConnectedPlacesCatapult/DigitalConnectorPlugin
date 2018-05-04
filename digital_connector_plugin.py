@@ -364,8 +364,8 @@ class DigitalConnectorPlugin:
                 progressbar.setWindowTitle("Running gradle task...")
                 progressbar.show()
 
-                for log in iter(output.stdout.readline, b''):
-                    sys.stdout.write(str(log) + '\n')
+                # for log in iter(output.stdout.readline, b''):
+                #     sys.stdout.write(str(log) + '\n')
                 # Adding the resulting layer in the map
                 vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
