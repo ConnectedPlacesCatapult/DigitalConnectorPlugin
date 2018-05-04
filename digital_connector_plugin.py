@@ -345,14 +345,14 @@ class DigitalConnectorPlugin:
                         if 'Git' in i:
                             git_path = 'C:\\Program Files\\' + i + '\\bin'
                             # No single quotes allowed in the string on Windows...
-                            output = sp.call('{0} git pull'.format(git_path), cwd=dc_directory)
+                            output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
                         else:
                             pass
                     for j in  os.listdir('C:\\Program Files (x86)'):
                         if 'Git' in j:
-                            print j
                             git_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
-                            output = sp.call('{0} git pull'.format(git_path), cwd=dc_directory)
+                            print git_path
+                            output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
                         else:
                             pass 
                     # If all fails ask user             
@@ -363,7 +363,7 @@ class DigitalConnectorPlugin:
                                 expanduser("~"),
                                 QFileDialog.ShowDirsOnly
                             )
-                        output = sp.call('{0} git pull'.format(git_path), cwd=dc_directory)               
+                        output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)               
 
             # check if the path corresponds to the examples folder or not. 
             # This is necessary due to the absolute paths of subprocess
