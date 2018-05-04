@@ -363,18 +363,18 @@ class DigitalConnectorPlugin:
                     for log in iter(output.stdout.readline, b''):
                         sys.stdout.write(str(log) + '\n')
 
-                progressbar = QProgressBar()
-                progressbar.setMinimum(0)
-                progressbar.setMaximum(0)
-                progressbar.setValue(0)
-                progressbar.setWindowTitle("Running gradle task...")
-                progressbar.show()
+                    progressbar = QProgressBar()
+                    progressbar.setMinimum(0)
+                    progressbar.setMaximum(0)
+                    progressbar.setValue(0)
+                    progressbar.setWindowTitle("Running gradle task...")
+                    progressbar.show()
 
 
-                # Adding the resulting layer in the map
-                vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
-                print vlayer
-                QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
+                    # Adding the resulting layer in the map
+                    vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
+                    print vlayer
+                    QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
 
     def clean_json(self, file):
         """ Clean json from comments """
