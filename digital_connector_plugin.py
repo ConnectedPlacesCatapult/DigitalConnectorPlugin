@@ -276,14 +276,12 @@ class DigitalConnectorPlugin:
             for i in os.listdir('C:\\Program Files'):
                 if 'gradle' in i:
                     gradle_path = 'C:\\Program Files\\' + i + '\\bin'
-                    print gradle_path
                     return gradle_path
                 else:
                     pass
-            for j in  os.listdir('C:\\Program Files x86'):
+            for j in  os.listdir('C:\\Program Files (x86)'):
                 if 'gradle' in j:
-                    gradle_path = 'C:\\Program Files x86\\' + j + '\\bin'
-                    print gradle_path
+                    gradle_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
                     return gradle_path
                 else:
                     pass              
@@ -334,7 +332,7 @@ class DigitalConnectorPlugin:
             dc_recipe = self.track_recipe_choice()
             to_save = self.select_output_name()
 
-            # check weather the path corresponds to the examples folder or not. 
+            # check if the path corresponds to the examples folder or not. 
             # This is necessary due to the absolute paths of subprocess
             chars = set("\/")
             if any((c in chars) for c in dc_recipe):
@@ -351,7 +349,8 @@ class DigitalConnectorPlugin:
                         os.environ['PATH'] += ';' + gradle_command
                     else:
                         pass
-                    args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format('gradle.bat',dc_directory,dc_recipe,to_save)]
+                    args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command + '\\gradle.bat',
+                                                                                    dc_directory,dc_recipe,to_save)]
                     print args
                     output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
                 else:
