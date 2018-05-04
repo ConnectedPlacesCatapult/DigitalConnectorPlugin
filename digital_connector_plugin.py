@@ -349,10 +349,9 @@ class DigitalConnectorPlugin:
                         os.environ['PATH'] += ';' + gradle_command
                     else:
                         pass
-                    args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command + '\\gradle.bat',
+                    # No single quotes allowed in the string...
+                    args = ['{0} runExport -Precipe="{2}"  -Poutput="{3}"'.format(gradle_command + '\\gradle.bat',
                                                                                     dc_directory,dc_recipe,to_save)]
-                    print args
-                    print dc_directory
                     output = sp.Popen(args, cwd=dc_directory)
                 else:
                     args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
@@ -370,6 +369,7 @@ class DigitalConnectorPlugin:
 
                 # Adding the resulting layer in the map
                 vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
+                print vlayer
                 QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
 
     def clean_json(self, file):
