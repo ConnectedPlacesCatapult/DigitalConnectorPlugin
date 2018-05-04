@@ -74,6 +74,37 @@ class DigitalConnectorPlugin:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
+        ## Windows configuration
+        # check for JAVA in Program Files
+        if platform.system() == 'Windows':
+            java_path = None
+            # Look in both Program Files and Program Files x86
+            for i in os.listdir('C:\\Program Files'):
+                if 'Java' in i:
+                    java_path_temp = 'C:\\Program Files\\' + i 
+                    java_path_temp = 'C:\\Program Files\\' + os.listdir(java_path_temp)[0] + '\\bin'
+                    java_path = java_path_temp
+                else:
+                    pass
+            for j in  os.listdir('C:\\Program Files x86'):
+                if 'Java' in j:
+                    java_path_temp = 'C:\\Program Files x86\\' + i 
+                    java_path_temp = 'C:\\Program Files x86\\' + os.listdir(java_path_temp)[0] + '\\bin'
+                    java_path = java_path_temp
+                else:
+                    pass
+            # ERROR cannot find Java installation
+            if java_path == None:
+                self.iface.messageBar().pushMessage("Error", "No Java installation found in Program Files. Please install Java", level=QgsMessageBar.CRITICAL)
+                sys.exit()
+
+            # Add missing PATHs for windows
+            current_execs = os.environ['PATH']
+            if not 'Java' in current_execs:
+                os.environ['PATH'] += java_path
+                
+
+
 
         # Declare instance attributes
         self.actions = []
@@ -93,6 +124,7 @@ class DigitalConnectorPlugin:
         self.dlg.pushButton.clicked.connect(self.select_dc_directory)
         self.dlg.pushButton_2.clicked.connect(self.visualise_recipe)
         self.dlg.pushButton_3.clicked.connect(self.edit_recipe)
+
 
 
     # noinspection PyMethodMayBeStatic
