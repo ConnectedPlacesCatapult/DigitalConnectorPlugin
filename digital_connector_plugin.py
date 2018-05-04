@@ -326,7 +326,6 @@ class DigitalConnectorPlugin:
 
         # See if OK was pressed
         if result:
-            # gradle_command = '/usr/local/Cellar/gradle/4.1/bin/gradle'
             gradle_command = self.get_gradle_dir()
             dc_directory = self.dlg.lineEdit.text()
             dc_recipe = self.track_recipe_choice()
@@ -340,6 +339,14 @@ class DigitalConnectorPlugin:
             else:
                 dc_recipe = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe,to_save)
 
+
+            # Check for -Pclear=True
+            if self.dlg.checkBox.isChecked():
+                p_clear = 'true'
+            else:
+                p_clear= 'false'
+
+
             # TODO need to add more error messages
             if not to_save:
                 self.iface.messageBar().pushMessage("Error", "Please choose a name for the output file", level=QgsMessageBar.CRITICAL)
@@ -349,16 +356,17 @@ class DigitalConnectorPlugin:
                         os.environ['PATH'] += ';' + gradle_command
                     else:
                         pass
-                    # No single quotes allowed in the string...
-                    output = sp.call('{0} runExport -Precipe="{2}"  -Poutput="{3}"'.format(gradle_command + '\\gradle.bat',
-                                                                                    dc_directory,dc_recipe,to_save),
+                        
+                    # No single quotes allowed in the string on Windows...
+                    output = sp.call('{0} runExport -Precipe="{2}"  -Poutput="{3}" -Pclear="{4}"'.format(gradle_command + '\\gradle.bat',
+                                                                                    dc_directory,dc_recipe,to_save, p_clear),
                                                                                      cwd=dc_directory)
-                    # Adding the resulting layer in the map
+                    # Adding the resulting layer in the QGIS Layers Panel
                     vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
-                    print vlayer
                     QgsMapLayerRegistry.instance().addMapLayer(vlayer)   
                 else:
-                    args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
+                    args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}' -Pclear='{4}'".format(gradle_command,dc_directory,
+                                                                                        dc_recipe,to_save, p_clear)]
                     output = sp.Popen(args,stdout=sp.PIPE, cwd=dc_directory, shell=True)
                     for log in iter(output.stdout.readline, b''):
                         sys.stdout.write(str(log) + '\n')
@@ -371,9 +379,8 @@ class DigitalConnectorPlugin:
                     progressbar.show()
 
 
-                    # Adding the resulting layer in the map
+                    # Adding the resulting layer in the QGIS Layers Panel
                     vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
-                    print vlayer
                     QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
 
     def clean_json(self, file):
@@ -392,7 +399,7 @@ class DigitalConnectorPlugin:
         f = json.loads(jsn)
         return f
 
-        
+
     def edit_recipe(self):
         """ Fires up load recipe class and keeps track of the edited result """
         # get thet recipe
