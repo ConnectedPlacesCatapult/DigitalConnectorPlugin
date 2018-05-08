@@ -153,6 +153,19 @@
     <string>Update Digital Connector</string>
    </property>
   </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>130</y>
+     <width>261</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>recipe url</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>

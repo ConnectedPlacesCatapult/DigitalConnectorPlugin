@@ -140,6 +140,7 @@ class DigitalConnectorPlugin:
         print img_path
         self.dlg.label_3.setPixmap(QPixmap(img_path))
 
+
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -267,6 +268,10 @@ class DigitalConnectorPlugin:
             for file in os.listdir(recipes):
                 if file.endswith(".json"):
                     recipes_list.append(file)
+
+            # Attach signal to the combobox
+            self.dlg.comboBox.currentIndexChanged.connect(self.on_combobox_changed)    
+
             self.dlg.comboBox.clear()
             self.dlg.comboBox.addItems(recipes_list)
 
@@ -351,7 +356,6 @@ class DigitalConnectorPlugin:
                     for j in  os.listdir('C:\\Program Files (x86)'):
                         if 'Git' in j:
                             git_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
-                            print git_path
                             output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
                         else:
                             pass 
@@ -364,6 +368,28 @@ class DigitalConnectorPlugin:
                                 QFileDialog.ShowDirsOnly
                             )
                         output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)               
+                # git pull for Mac OSX
+                elif platform.system() == 'Darwin':
+                    for i in os.listdir('/usr/local/Cellar/'):
+                        if 'git' in i:
+                            git_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
+                                            '/' + 'bin/git'
+                            args = ['{0} pull'.format(git_path)]
+                            output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                        else:
+                            pass
+                    if git_path == None:
+                        git_path = QFileDialog.getExistingDirectory(
+                                self.dlg,
+                                "Select git path",
+                                expanduser("~"),
+                                QFileDialog.ShowDirsOnly
+                            )
+                        args = ['{0} pull'.format(git_path)]
+                        output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                else:
+                    print 'currently the plugin only supports Mac and Windows'                    
+
 
             # check if the path corresponds to the examples folder or not. 
             # This is necessary due to the absolute paths of subprocess
@@ -416,6 +442,18 @@ class DigitalConnectorPlugin:
                     # Adding the resulting layer in the QGIS Layers Panel
                     vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
                     QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
+
+    def on_combobox_changed(self, value):
+        recipes =  self.dlg.lineEdit.text() + "/src/main/resources/executions/examples"
+        recipes_list = []
+        for file in os.listdir(recipes):
+            if file.endswith(".json"):
+                recipes_list.append(file)
+        dc_url = "https://github.com/FutureCitiesCatapult/TomboloDigitalConnector/tree/master/src/main/resources/executions/examples/"
+        url_recipe = urlLink=" <a href=\"{1}{0}\"> <font face=verdana size=3 color=blue> {0}</font> </a>".format(recipes_list[value],dc_url)
+        self.dlg.label_4.setOpenExternalLinks(True)
+        update_url_recipe = self.dlg.label_4.setText(url_recipe)
+        print("combobox changed", value)
 
     def clean_json(self, file):
         """ Clean json from comments """
