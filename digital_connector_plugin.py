@@ -518,7 +518,19 @@ class DigitalConnectorPlugin:
             from graphviz import Digraph
             from graphviz import Source
 
-            c, r = self.traverse(file, None)
+            with open(file) as f:
+                content = f.readlines()
+            jsn = ''    
+            for i in content:
+                if '//' in i:
+                    pass
+                else:
+                    jsn = jsn+i.replace("/n",'')
+                    
+                    
+                
+            f = json.loads(jsn)
+            c, r = self.traverse(f, None)
 
             dot = Digraph()
             dot.attr('node', shape='box')
