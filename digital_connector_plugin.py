@@ -104,7 +104,6 @@ class DigitalConnectorPlugin:
             # ERROR cannot find Java installation
             if java_path == None:
                 self.iface.messageBar().pushMessage("Error", "No Java installation found in Program Files. Please install Java", level=QgsMessageBar.CRITICAL)
-                sys.exit()
 
             # Add missing PATHs for windows
             current_execs = os.environ['PATH']
@@ -515,7 +514,41 @@ class DigitalConnectorPlugin:
         dc_recipe = self.track_recipe_choice()
 
         file  = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe)
-        self.dict2svg(self.clean_json(file))
+        try:
+            from graphviz import Digraph
+            from graphviz import Source
+
+            c, r = self.traverse(file, None)
+
+            dot = Digraph()
+            dot.attr('node', shape='box')
+
+            for i in c:
+                print(i)
+                dot.node(i['clsNameFullReference'], label ='''<<table border="0">
+                                                            <tr>
+                                                                <td>{0}</td>
+                                                            </tr>
+                                                            <hr/>
+                                                            <tr><td><FONT COLOR="red" POINT-SIZE="16.0">Properties</FONT></td></tr>
+                                                            {1}
+                                                            <hr/>
+                                                            <tr><td><FONT COLOR="red" POINT-SIZE="16.0">Objects</FONT></td></tr>
+                                                            {2}
+                                                    </table>>'''.format(i['clsName'],
+                                                                        ['<tr><td>'+j+'</td></tr>' for j in i['clsProperties']],
+                                                                    ['<tr><td>'+k+'</td></tr>' for k in i['clsObjects']]))
+                
+
+            for j in r:
+                dot.edge(j.split('-->')[0].split(" ")[0].replace('"',""),j.split('-->')[-1].split(" ")[-1].replace('"',""))  
+            s = Source(dot, filename="test.gv", format="png")
+            s.view()
+        except ImportError, e:
+
+            self.iface.messageBar().pushMessage("Error", "You need to install graphviz to visualise the recipe. Please refer to installation instructions", level=QgsMessageBar.CRITICAL)
+
+        # self.dict2svg(self.clean_json(file))
     
 
     def traverse(self, obj, parent):
@@ -597,85 +630,85 @@ class DigitalConnectorPlugin:
         return vertices, edges
 
 
-    def printClass(self, cls):
-        """Returns the string reopresention of a class"""
+    # def printClass(self, cls):
+    #     """Returns the string reopresention of a class"""
 
-        s = ""
+    #     s = ""
 
-        s += ("class \"{}\" as {} {{"
-            .format(cls["clsName"], cls["clsNameFullReference"])) + "\n"
+    #     s += ("class \"{}\" as {} {{"
+    #         .format(cls["clsName"], cls["clsNameFullReference"])) + "\n"
 
-        s += "\t" + ".. Properties .." + "\n"
-        if cls["clsProperties"]:
-            for p in cls["clsProperties"]:
-                s += "\t" + p + "\n"
+    #     s += "\t" + ".. Properties .." + "\n"
+    #     if cls["clsProperties"]:
+    #         for p in cls["clsProperties"]:
+    #             s += "\t" + p + "\n"
 
-        if cls["clsObjects"]:
-            s += "\t" + ".. Objects .." + "\n"
-            for o in cls["clsObjects"]:
-                s += "\t" + o + "\n"
+    #     if cls["clsObjects"]:
+    #         s += "\t" + ".. Objects .." + "\n"
+    #         for o in cls["clsObjects"]:
+    #             s += "\t" + o + "\n"
 
-        s += "}" + "\n"
+    #     s += "}" + "\n"
 
-        return s
+    #     return s
 
 
-    def dict2plantuml(self, d):
-        """Covert a dictionary to PlantUML text
-           In the future we might consider doing this 
-           using graphviz
-        """
+    # def dict2plantuml(self, d):
+    #     """Covert a dictionary to PlantUML text
+    #        In the future we might consider doing this 
+    #        using graphviz
+    #     """
 
-        s = "@startuml\n"
+    #     s = "@startuml\n"
 
-        if isinstance(d, dict):
-            d = {"root": d}
+    #     if isinstance(d, dict):
+    #         d = {"root": d}
 
-            c, r = self.traverse(d, None)
+    #         c, r = self.traverse(d, None)
 
-            for cls in c:
-                s += self.printClass(cls) + "\n"
+    #         for cls in c:
+    #             s += self.printClass(cls) + "\n"
 
-            for rel in r:
-                s += rel + "\n"
-        else:
-            raise TypeError("The input should be a dictionary.")
+    #         for rel in r:
+    #             s += rel + "\n"
+    #     else:
+    #         raise TypeError("The input should be a dictionary.")
 
-        return s + "@enduml"
+    #     return s + "@enduml"
 
     
-    def plantuml_exec(self, *file_names):
-        """Run PlantUML"""
+    # def plantuml_exec(self, *file_names):
+    #     """Run PlantUML"""
 
-        cmd = ["/usr/local/bin/plantuml",
-            "-tpng"] + list(file_names)
+    #     cmd = ["/usr/local/bin/plantuml",
+    #         "-tpng"] + list(file_names)
 
-        sp.check_call(cmd, shell=False, stderr=sp.STDOUT)
+    #     sp.check_call(cmd, shell=False, stderr=sp.STDOUT)
 
-        return [os.path.splitext(f)[0] + ".png" for f in file_names]
+    #     return [os.path.splitext(f)[0] + ".png" for f in file_names]
 
 
-    def dict2svg(self, d):
+    # def dict2svg(self, d):
 
-        base_name = str(uuid.uuid4())
-        uml_path = expanduser("~") + "/" + base_name + ".uml"
+    #     base_name = str(uuid.uuid4())
+    #     uml_path = expanduser("~") + "/" + base_name + ".uml"
 
-        with open(uml_path, 'w') as fp:
-            fp.write(self.dict2plantuml(d))
+    #     with open(uml_path, 'w') as fp:
+    #         fp.write(self.dict2plantuml(d))
 
-        try:
-            output = self.plantuml_exec(uml_path)
-            svg_name = output[0]
-            output = self.plantuml_exec(uml_path)
-            svg_name = output[0]
-            plt.imshow(mpimg.imread(svg_name))
-            plt.show()
+    #     try:
+    #         output = self.plantuml_exec(uml_path)
+    #         svg_name = output[0]
+    #         output = self.plantuml_exec(uml_path)
+    #         svg_name = output[0]
+    #         plt.imshow(mpimg.imread(svg_name))
+    #         plt.show()
 
-        finally:
+    #     finally:
 
-            if os.path.exists(uml_path):
-                os.unlink(uml_path)
+    #         if os.path.exists(uml_path):
+    #             os.unlink(uml_path)
 
-            svg_path = base_name + ".png"
-            if os.path.exists(svg_path):
-                os.unlink(svg_path)
+    #         svg_path = base_name + ".png"
+    #         if os.path.exists(svg_path):
+    #             os.unlink(svg_path)
