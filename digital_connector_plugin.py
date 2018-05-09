@@ -536,7 +536,6 @@ class DigitalConnectorPlugin:
             dot.attr('node', shape='box')
 
             for i in c:
-                print(i)
                 dot.node(i['clsNameFullReference'], label ='''<<table border="0">
                                                             <tr>
                                                                 <td>{0}</td>
