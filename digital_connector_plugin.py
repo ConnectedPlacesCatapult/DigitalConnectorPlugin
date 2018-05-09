@@ -554,7 +554,7 @@ class DigitalConnectorPlugin:
 
             for j in r:
                 dot.edge(j.split('-->')[0].split(" ")[0].replace('"',""),j.split('-->')[-1].split(" ")[-1].replace('"',""))  
-            s = Source(dot, filename="test.gv", format="png")
+            s = Source(dot, filename=expanduser("~") + "/"+"test.gv", format="png")
             s.view()
         except ImportError, e:
 
