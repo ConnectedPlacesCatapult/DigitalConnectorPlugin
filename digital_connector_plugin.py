@@ -520,7 +520,7 @@ class DigitalConnectorPlugin:
                 graphviz_path = None
                 # Look in both Program Files and Program Files x86
                 for i in os.listdir('C:\\Program Files'):
-                    if 'graphviz' in i:
+                    if 'Graphviz' in i:
                         graphviz_path = 'C:\\Program Files\\' + i + '\\bin'
                     else:
                         pass
@@ -529,7 +529,7 @@ class DigitalConnectorPlugin:
                     pass
                 else:
                     for j in  os.listdir('C:\\Program Files (x86)'):
-                        if 'graphviz' in j:
+                        if 'Graphviz' in j:
                             graphviz_path = 'C:\\Program Files (x86)\\' + i + '\\bin'
                         else:
                             pass
