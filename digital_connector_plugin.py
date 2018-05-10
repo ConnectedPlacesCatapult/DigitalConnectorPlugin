@@ -449,7 +449,13 @@ class DigitalConnectorPlugin:
             if file.endswith(".json"):
                 recipes_list.append(file)
         dc_url = "https://github.com/FutureCitiesCatapult/TomboloDigitalConnector/tree/master/src/main/resources/executions/examples/"
-        url_recipe = urlLink=" <a href=\"{1}{0}\"> <font face=verdana size=3 color=blue> {0}</font> </a>".format(recipes_list[value],dc_url)
+        
+        # Catch list index error if selecting a recipe that doesn't exist in resources/executions
+        try:
+            url_recipe = urlLink=" <a href=\"{1}{0}\"> <font face=verdana size=3 color=blue> {0}</font> </a>".format(recipes_list[value],dc_url)
+        except IndexError, e:
+            url_recipe = urlLink=" <a href=\"{0}\"> <font face=verdana size=3 color=blue> {0}</font> </a>".format(dc_url)
+        
         self.dlg.label_4.setOpenExternalLinks(True)
         update_url_recipe = self.dlg.label_4.setText(url_recipe)
         print("combobox changed", value)
