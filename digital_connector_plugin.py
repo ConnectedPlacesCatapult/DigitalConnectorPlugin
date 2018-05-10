@@ -515,6 +515,61 @@ class DigitalConnectorPlugin:
 
         file  = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe)
         try:
+            # Check if graphviz is installed
+            if platform.system() == 'Windows':
+                graphviz_path = None
+                # Look in both Program Files and Program Files x86
+                for i in os.listdir('C:\\Program Files'):
+                    if 'graphviz' in i:
+                        graphviz_path = 'C:\\Program Files\\' + i + '\\bin'
+                    else:
+                        pass
+
+                if graphviz_path != None:
+                    pass
+                else:
+                    for j in  os.listdir('C:\\Program Files (x86)'):
+                        if 'graphviz' in j:
+                            graphviz_path = 'C:\\Program Files (x86)\\' + i + '\\bin'
+                        else:
+                            pass
+                # ERROR cannot find graphviz installation
+                if graphviz_path == None:
+                    graphviz_path = QFileDialog.getExistingDirectory(
+                            self.dlg,
+                            "Select graphviz path",
+                            expanduser("~"),
+                            QFileDialog.ShowDirsOnly
+                        )
+                # Add missing PATHs for windows
+                current_execs = os.environ['PATH']
+                if not 'graphviz' in current_execs:
+                    os.environ['PATH'] += ';' + graphviz_path    
+
+            # check graphviz for Mac OSX             
+            elif platform.system() == 'Darwin':
+                for i in os.listdir('/usr/local/Cellar/'):
+                    
+                    if 'graphviz' in i:
+                        graphviz_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
+                                        '/' + 'bin'
+                        print graphviz_path
+                    else:
+                        pass
+                if graphviz_path == None:
+                    graphviz_path = QFileDialog.getExistingDirectory(
+                            self.dlg,
+                            "Select graphviz path",
+                            expanduser("~"),
+                            QFileDialog.ShowDirsOnly
+                        )
+                # Add missing PATHs for windows
+                current_execs = os.environ['PATH']
+                if not 'graphviz' in current_execs:
+                    os.environ['PATH'] += ':' + graphviz_path    
+            else:
+                self.iface.messageBar().pushMessage("Error", "We currently support only Windows and MacOSX", level=QgsMessageBar.CRITICAL)
+
             from graphviz import Digraph
             from graphviz import Source
 
