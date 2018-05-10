@@ -189,9 +189,12 @@ class EditRecipe(QtGui.QDialog):
             # make a prompt dialog box for savinhg the edited recipe
             output_recipe = QtGui.QFileDialog.getSaveFileName(dialog,  'Save File')
 
-            # save it and keep track of the file path
-            with open(output_recipe, 'w') as outfile:
-                outfile.write(updated_recipe)
+            if output_recipe == None:
+                pass
+            else:
+                # save it and keep track of the file path
+                with open(output_recipe, 'w') as outfile:
+                    outfile.write(updated_recipe)
 
             # updated_recipe = updated_subjects + updated_datasources + updated_fields
             # updated_recipe = ','.join(str(e) for e in updated_recipe)
