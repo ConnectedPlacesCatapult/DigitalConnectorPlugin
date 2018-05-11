@@ -43,7 +43,7 @@ import json
 import fileinput
 import subprocess as sp
 import uuid
-import os
+import platform
 
 class DigitalConnectorPlugin:
     """QGIS Plugin Implementation."""
@@ -74,6 +74,46 @@ class DigitalConnectorPlugin:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
+        ##### Windows configuration
+        # check for JAVA in Program Files
+        if platform.system() == 'Windows':
+            java_path = None
+            # Look in both Program Files and Program Files x86
+            for i in os.listdir('C:\\Program Files'):
+                if 'Java' in i:
+                    java_path_temp = 'C:\\Program Files\\' + i 
+                    for k in os.listdir(java_path_temp):
+                        if 'jdk' in k:
+                            java_path_temp = java_path_temp + '\\'  + k + '\\bin'
+                    java_path = java_path_temp
+                else:
+                    pass
+
+            if java_path != None:
+                pass
+            else:
+                for j in  os.listdir('C:\\Program Files (x86)'):
+                    if 'Java' in j:
+                        java_path_temp = 'C:\\Program Files (x86)\\' + i 
+                        for k in os.listdir(java_path_temp):
+                            if 'jdk' in k:
+                                java_path_temp = java_path_temp + '\\'  + k + '\\bin'
+                        java_path = java_path_temp
+                    else:
+                        pass
+            # ERROR cannot find Java installation
+            if java_path == None:
+                self.iface.messageBar().pushMessage("Error", "No Java installation found in Program Files. Please install Java", level=QgsMessageBar.CRITICAL)
+
+            # Add missing PATHs for windows
+            current_execs = os.environ['PATH']
+            if not 'Java' in current_execs:
+                os.environ['PATH'] += ';' + java_path
+
+        #####
+
+
+
 
         # Declare instance attributes
         self.actions = []
@@ -93,6 +133,11 @@ class DigitalConnectorPlugin:
         self.dlg.pushButton.clicked.connect(self.select_dc_directory)
         self.dlg.pushButton_2.clicked.connect(self.visualise_recipe)
         self.dlg.pushButton_3.clicked.connect(self.edit_recipe)
+
+        # Add DC icon
+        img_path = self.resolve('dc_logo.png')
+        print img_path
+        self.dlg.label_3.setPixmap(QPixmap(img_path))
 
 
     # noinspection PyMethodMayBeStatic
@@ -222,9 +267,63 @@ class DigitalConnectorPlugin:
             for file in os.listdir(recipes):
                 if file.endswith(".json"):
                     recipes_list.append(file)
+
+            # Attach signal to the combobox
+            self.dlg.comboBox.currentIndexChanged.connect(self.on_combobox_changed)    
+
             self.dlg.comboBox.clear()
             self.dlg.comboBox.addItems(recipes_list)
-    
+
+    # Get the path to gradle per os
+    def get_gradle_dir(self):
+        """Searches for gradle. If not found it asks for user input"""
+
+        gradle_path = None
+        # Windows
+        if platform.system() == 'Windows':
+            # Look in both Program Files and Program Files x86
+            for i in os.listdir('C:\\Program Files'):
+                if 'gradle' in i:
+                    gradle_path = 'C:\\Program Files\\' + i + '\\bin'
+                    return gradle_path
+                else:
+                    pass
+            for j in  os.listdir('C:\\Program Files (x86)'):
+                if 'gradle' in j:
+                    gradle_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
+                    return gradle_path
+                else:
+                    pass              
+            if gradle_path == None:
+                gradle_path = QFileDialog.getExistingDirectory(
+                        self.dlg,
+                        "Select gradle path",
+                        expanduser("~"),
+                        QFileDialog.ShowDirsOnly
+                    )
+                return  gradle_path
+        # MacOSX 
+        elif platform.system() == 'Darwin':
+            for i in os.listdir('/usr/local/Cellar/'):
+                if 'gradle' in i:
+                    gradle_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
+                                    '/' + 'bin/gradle'
+
+                    return gradle_path
+                else:
+                    pass
+            if gradle_path == None:
+                gradle_path = QFileDialog.getExistingDirectory(
+                        self.dlg,
+                        "Select gradle path",
+                        expanduser("~"),
+                        QFileDialog.ShowDirsOnly
+                    )
+                return  gradle_path                   
+        else:
+            print 'currently the plugin only supports Mac and Windows'
+             
+
     def run(self):
         """Run method that performs all the real work"""
 
@@ -236,38 +335,134 @@ class DigitalConnectorPlugin:
 
         # See if OK was pressed
         if result:
-            gradle_command = '/usr/local/Cellar/gradle/4.1/bin/gradle'
+            gradle_command = self.get_gradle_dir()
             dc_directory = self.dlg.lineEdit.text()
-            dc_recipe = self.track_recipe_choice()
-            to_save = self.select_output_name()
-
-            # check weather the path corresponds to the examples folder or not. 
-            # This is necessary due to the absolute paths of subprocess
-            chars = set("\/")
-            if any((c in chars) for c in dc_recipe):
-                pass
+            print dc_directory
+            if dc_directory == '':
+                self.iface.messageBar().pushMessage("Error", "Please provide the directory of the Digital Connector", level=QgsMessageBar.CRITICAL)
             else:
-                dc_recipe = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe,to_save)
+                dc_recipe = self.track_recipe_choice()
+                to_save = self.select_output_name()
 
-            # TODO need to add more error messages
-            if not to_save:
-                self.iface.messageBar().pushMessage("Error", "Please choose a name for the output file", level=QgsMessageBar.CRITICAL)
-            else:
-                args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}'".format(gradle_command,dc_directory,dc_recipe,to_save)]
-                output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                # Update DC and QGIS repo
+                if self.dlg.checkBox_2.isChecked():
+                    git_path = None
+                    if platform.system() == 'Windows':
+                        # Look in both Program Files and Program Files x86
+                        for i in os.listdir('C:\\Program Files'):
+                            if 'Git' in i:
+                                git_path = 'C:\\Program Files\\' + i + '\\bin'
+                                # No single quotes allowed in the string on Windows...
+                                output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
+                            else:
+                                pass
+                        for j in  os.listdir('C:\\Program Files (x86)'):
+                            if 'Git' in j:
+                                git_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
+                                output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
+                            else:
+                                pass 
+                        # If all fails ask user             
+                        if git_path == None:
+                            git_path = QFileDialog.getExistingDirectory(
+                                    self.dlg,
+                                    "Select git path",
+                                    expanduser("~"),
+                                    QFileDialog.ShowDirsOnly
+                                )
+                            output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)               
+                    # git pull for Mac OSX
+                    elif platform.system() == 'Darwin':
+                        for i in os.listdir('/usr/local/Cellar/'):
+                            if 'git' in i:
+                                git_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
+                                                '/' + 'bin/git'
+                                args = ['{0} pull'.format(git_path)]
+                                output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                            else:
+                                pass
+                        if git_path == None:
+                            git_path = QFileDialog.getExistingDirectory(
+                                    self.dlg,
+                                    "Select git path",
+                                    expanduser("~"),
+                                    QFileDialog.ShowDirsOnly
+                                )
+                            args = ['{0} pull'.format(git_path)]
+                            output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                    else:
+                        print 'currently the plugin only supports Mac and Windows'                    
 
-                progressbar = QProgressBar()
-                progressbar.setMinimum(0)
-                progressbar.setMaximum(0)
-                progressbar.setValue(0)
-                progressbar.setWindowTitle("Running gradle task...")
-                progressbar.show()
 
-                for log in iter(output.stdout.readline, b''):
-                    sys.stdout.write(str(log) + '\n')
-                # Adding the resulting layer in the map
-                vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
-                QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
+                # check if the path corresponds to the examples folder or not. 
+                # This is necessary due to the absolute paths of subprocess
+                chars = set("\/")
+                if any((c in chars) for c in dc_recipe):
+                    pass
+                else:
+                    dc_recipe = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe,to_save)
+
+
+                # Check for -Pclear=True
+                if self.dlg.checkBox.isChecked():
+                    p_clear = 'true'
+                else:
+                    p_clear= 'false'
+
+
+                # TODO need to add more error messages
+                if not to_save:
+                    self.iface.messageBar().pushMessage("Error", "Please choose a name for the output file", level=QgsMessageBar.CRITICAL)
+                else:
+                    if platform.system() == 'Windows':
+                        if not gradle_command in os.environ['PATH']:
+                            os.environ['PATH'] += ';' + gradle_command
+                        else:
+                            pass
+                            
+                        # No single quotes allowed in the string on Windows...
+                        output = sp.call('{0} runExport -Precipe="{2}"  -Poutput="{3}" -Pclear="{4}"'.format(gradle_command + '\\gradle.bat',
+                                                                                        dc_directory,dc_recipe,to_save, p_clear),
+                                                                                        cwd=dc_directory)
+                        # Adding the resulting layer in the QGIS Layers Panel
+                        vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
+                        QgsMapLayerRegistry.instance().addMapLayer(vlayer)   
+                    else:
+                        args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}' -Pclear='{4}'".format(gradle_command,dc_directory,
+                                                                                            dc_recipe,to_save, p_clear)]
+                        output = sp.Popen(args,stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                        for log in iter(output.stdout.readline, b''):
+                            sys.stdout.write(str(log) + '\n')
+
+                        progressbar = QProgressBar()
+                        progressbar.setMinimum(0)
+                        progressbar.setMaximum(0)
+                        progressbar.setValue(0)
+                        progressbar.setWindowTitle("Running gradle task...")
+                        progressbar.show()
+
+
+                        # Adding the resulting layer in the QGIS Layers Panel
+                        vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
+                        QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
+
+    def on_combobox_changed(self, value):
+        recipes =  self.dlg.lineEdit.text() + "/src/main/resources/executions/examples"
+        recipes_list = []
+        for file in os.listdir(recipes):
+            if file.endswith(".json"):
+                recipes_list.append(file)
+        dc_url = "https://github.com/FutureCitiesCatapult/TomboloDigitalConnector/tree/master/src/main/resources/executions/examples/"
+        
+        # Catch list index error if selecting a recipe that doesn't exist in resources/executions
+        try:
+            url_recipe = urlLink=" <a href=\"{1}{0}\"> <font face=verdana size=3 color=blue> {0}</font> </a>".format(recipes_list[value],dc_url)
+        except IndexError, e:
+            url_recipe = urlLink=" <a href=\"{0}\"> <font face=verdana size=3 color=blue> {0}</font> </a>".format(dc_url)
+        
+        self.dlg.label_4.setOpenExternalLinks(True)
+        update_url_recipe = self.dlg.label_4.setText(url_recipe)
+        print("combobox changed", value)
 
     def clean_json(self, file):
         """ Clean json from comments """
@@ -285,10 +480,9 @@ class DigitalConnectorPlugin:
         f = json.loads(jsn)
         return f
 
-        
+
     def edit_recipe(self):
         """ Fires up load recipe class and keeps track of the edited result """
-
         # get thet recipe
         file = '{0}/src/main/resources/executions/examples/{1}'.format(self.dlg.lineEdit.text(),self.track_recipe_choice())
         recipe_file = self.clean_json(file)
@@ -304,7 +498,6 @@ class DigitalConnectorPlugin:
         
         print updated_recipe
 
-
     def select_output_name(self):
         """Returns the name of the exported geojson"""
         
@@ -317,6 +510,11 @@ class DigitalConnectorPlugin:
         dc_recipe = str(self.dlg.comboBox.currentText())
         return dc_recipe
 
+    def resolve(self, name, basepath=None):
+        if not basepath:
+            basepath = os.path.dirname(os.path.realpath(__file__))
+        return os.path.join(basepath, name)
+
     # Visualing recipe
     def visualise_recipe(self):
         """ Visualing recipe using plantUML
@@ -326,7 +524,107 @@ class DigitalConnectorPlugin:
         dc_recipe = self.track_recipe_choice()
 
         file  = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe)
-        self.dict2svg(self.clean_json(file))
+        try:
+            # Check if graphviz is installed
+            if platform.system() == 'Windows':
+                graphviz_path = None
+                # Look in both Program Files and Program Files x86
+                for i in os.listdir('C:\\Program Files'):
+                    if 'Graphviz' in i:
+                        graphviz_path = 'C:\\Program Files\\' + i + '\\bin'
+                    else:
+                        pass
+
+                if graphviz_path != None:
+                    pass
+                else:
+                    for j in  os.listdir('C:\\Program Files (x86)'):
+                        if 'Graphviz' in j:
+                            graphviz_path = 'C:\\Program Files (x86)\\' + i + '\\bin'
+                        else:
+                            pass
+                # ERROR cannot find graphviz installation
+                if graphviz_path == None:
+                    graphviz_path = QFileDialog.getExistingDirectory(
+                            self.dlg,
+                            "Select graphviz path",
+                            expanduser("~"),
+                            QFileDialog.ShowDirsOnly
+                        )
+                # Add missing PATHs for windows
+                current_execs = os.environ['PATH']
+                if not 'graphviz' in current_execs:
+                    os.environ['PATH'] += ';' + graphviz_path    
+
+            # check graphviz for Mac OSX             
+            elif platform.system() == 'Darwin':
+                for i in os.listdir('/usr/local/Cellar/'):
+                    
+                    if 'graphviz' in i:
+                        graphviz_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
+                                        '/' + 'bin'
+                        print graphviz_path
+                    else:
+                        pass
+                if graphviz_path == None:
+                    graphviz_path = QFileDialog.getExistingDirectory(
+                            self.dlg,
+                            "Select graphviz path",
+                            expanduser("~"),
+                            QFileDialog.ShowDirsOnly
+                        )
+                # Add missing PATHs for windows
+                current_execs = os.environ['PATH']
+                if not 'graphviz' in current_execs:
+                    os.environ['PATH'] += ':' + graphviz_path    
+            else:
+                self.iface.messageBar().pushMessage("Error", "We currently support only Windows and MacOSX", level=QgsMessageBar.CRITICAL)
+
+            from graphviz import Digraph
+            from graphviz import Source
+
+            with open(file) as f:
+                content = f.readlines()
+            jsn = ''    
+            for i in content:
+                if '//' in i:
+                    pass
+                else:
+                    jsn = jsn+i.replace("/n",'')
+                    
+                    
+                
+            f = json.loads(jsn)
+            c, r = self.traverse(f, None)
+
+            dot = Digraph()
+            dot.attr('node', shape='box')
+
+            for i in c:
+                dot.node(i['clsNameFullReference'], label ='''<<table border="0">
+                                                            <tr>
+                                                                <td>{0}</td>
+                                                            </tr>
+                                                            <hr/>
+                                                            <tr><td><FONT COLOR="red" POINT-SIZE="16.0">Properties</FONT></td></tr>
+                                                            {1}
+                                                            <hr/>
+                                                            <tr><td><FONT COLOR="red" POINT-SIZE="16.0">Objects</FONT></td></tr>
+                                                            {2}
+                                                    </table>>'''.format(i['clsName'],
+                                                                        ['<tr><td>'+j+'</td></tr>' for j in i['clsProperties']],
+                                                                    ['<tr><td>'+k+'</td></tr>' for k in i['clsObjects']]))
+                
+
+            for j in r:
+                dot.edge(j.split('-->')[0].split(" ")[0].replace('"',""),j.split('-->')[-1].split(" ")[-1].replace('"',""))  
+            s = Source(dot, filename=expanduser("~") + "/"+"test.gv", format="png")
+            s.view()
+        except ImportError, e:
+
+            self.iface.messageBar().pushMessage("Error", "You need to install graphviz to visualise the recipe. Please refer to installation instructions", level=QgsMessageBar.CRITICAL)
+
+        # self.dict2svg(self.clean_json(file))
     
 
     def traverse(self, obj, parent):
@@ -408,85 +706,85 @@ class DigitalConnectorPlugin:
         return vertices, edges
 
 
-    def printClass(self, cls):
-        """Returns the string reopresention of a class"""
+    # def printClass(self, cls):
+    #     """Returns the string reopresention of a class"""
 
-        s = ""
+    #     s = ""
 
-        s += ("class \"{}\" as {} {{"
-            .format(cls["clsName"], cls["clsNameFullReference"])) + "\n"
+    #     s += ("class \"{}\" as {} {{"
+    #         .format(cls["clsName"], cls["clsNameFullReference"])) + "\n"
 
-        s += "\t" + ".. Properties .." + "\n"
-        if cls["clsProperties"]:
-            for p in cls["clsProperties"]:
-                s += "\t" + p + "\n"
+    #     s += "\t" + ".. Properties .." + "\n"
+    #     if cls["clsProperties"]:
+    #         for p in cls["clsProperties"]:
+    #             s += "\t" + p + "\n"
 
-        if cls["clsObjects"]:
-            s += "\t" + ".. Objects .." + "\n"
-            for o in cls["clsObjects"]:
-                s += "\t" + o + "\n"
+    #     if cls["clsObjects"]:
+    #         s += "\t" + ".. Objects .." + "\n"
+    #         for o in cls["clsObjects"]:
+    #             s += "\t" + o + "\n"
 
-        s += "}" + "\n"
+    #     s += "}" + "\n"
 
-        return s
+    #     return s
 
 
-    def dict2plantuml(self, d):
-        """Covert a dictionary to PlantUML text
-           In the future we might consider doing this 
-           using graphviz
-        """
+    # def dict2plantuml(self, d):
+    #     """Covert a dictionary to PlantUML text
+    #        In the future we might consider doing this 
+    #        using graphviz
+    #     """
 
-        s = "@startuml\n"
+    #     s = "@startuml\n"
 
-        if isinstance(d, dict):
-            d = {"root": d}
+    #     if isinstance(d, dict):
+    #         d = {"root": d}
 
-            c, r = self.traverse(d, None)
+    #         c, r = self.traverse(d, None)
 
-            for cls in c:
-                s += self.printClass(cls) + "\n"
+    #         for cls in c:
+    #             s += self.printClass(cls) + "\n"
 
-            for rel in r:
-                s += rel + "\n"
-        else:
-            raise TypeError("The input should be a dictionary.")
+    #         for rel in r:
+    #             s += rel + "\n"
+    #     else:
+    #         raise TypeError("The input should be a dictionary.")
 
-        return s + "@enduml"
+    #     return s + "@enduml"
 
     
-    def plantuml_exec(self, *file_names):
-        """Run PlantUML"""
+    # def plantuml_exec(self, *file_names):
+    #     """Run PlantUML"""
 
-        cmd = ["/usr/local/bin/plantuml",
-            "-tpng"] + list(file_names)
+    #     cmd = ["/usr/local/bin/plantuml",
+    #         "-tpng"] + list(file_names)
 
-        sp.check_call(cmd, shell=False, stderr=sp.STDOUT)
+    #     sp.check_call(cmd, shell=False, stderr=sp.STDOUT)
 
-        return [os.path.splitext(f)[0] + ".png" for f in file_names]
+    #     return [os.path.splitext(f)[0] + ".png" for f in file_names]
 
 
-    def dict2svg(self, d):
+    # def dict2svg(self, d):
 
-        base_name = str(uuid.uuid4())
-        uml_path = expanduser("~") + "/" + base_name + ".uml"
+    #     base_name = str(uuid.uuid4())
+    #     uml_path = expanduser("~") + "/" + base_name + ".uml"
 
-        with open(uml_path, 'w') as fp:
-            fp.write(self.dict2plantuml(d))
+    #     with open(uml_path, 'w') as fp:
+    #         fp.write(self.dict2plantuml(d))
 
-        try:
-            output = self.plantuml_exec(uml_path)
-            svg_name = output[0]
-            output = self.plantuml_exec(uml_path)
-            svg_name = output[0]
-            plt.imshow(mpimg.imread(svg_name))
-            plt.show()
+    #     try:
+    #         output = self.plantuml_exec(uml_path)
+    #         svg_name = output[0]
+    #         output = self.plantuml_exec(uml_path)
+    #         svg_name = output[0]
+    #         plt.imshow(mpimg.imread(svg_name))
+    #         plt.show()
 
-        finally:
+    #     finally:
 
-            if os.path.exists(uml_path):
-                os.unlink(uml_path)
+    #         if os.path.exists(uml_path):
+    #             os.unlink(uml_path)
 
-            svg_path = base_name + ".png"
-            if os.path.exists(svg_path):
-                os.unlink(svg_path)
+    #         svg_path = base_name + ".png"
+    #         if os.path.exists(svg_path):
+    #             os.unlink(svg_path)
