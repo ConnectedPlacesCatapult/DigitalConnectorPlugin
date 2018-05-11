@@ -189,7 +189,7 @@ class EditRecipe(QtGui.QDialog):
             # make a prompt dialog box for savinhg the edited recipe
             output_recipe = QtGui.QFileDialog.getSaveFileName(dialog,  'Save File')
 
-            if output_recipe == None:
+            if output_recipe == '':
                 pass
             else:
                 # save it and keep track of the file path

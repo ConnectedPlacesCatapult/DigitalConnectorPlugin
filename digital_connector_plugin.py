@@ -337,110 +337,114 @@ class DigitalConnectorPlugin:
         if result:
             gradle_command = self.get_gradle_dir()
             dc_directory = self.dlg.lineEdit.text()
-            dc_recipe = self.track_recipe_choice()
-            to_save = self.select_output_name()
+            print dc_directory
+            if dc_directory == '':
+                self.iface.messageBar().pushMessage("Error", "Please provide the directory of the Digital Connector", level=QgsMessageBar.CRITICAL)
+            else:
+                dc_recipe = self.track_recipe_choice()
+                to_save = self.select_output_name()
 
-            # Update DC and QGIS repo
-            if self.dlg.checkBox_2.isChecked():
-                git_path = None
-                if platform.system() == 'Windows':
-                    # Look in both Program Files and Program Files x86
-                    for i in os.listdir('C:\\Program Files'):
-                        if 'Git' in i:
-                            git_path = 'C:\\Program Files\\' + i + '\\bin'
-                            # No single quotes allowed in the string on Windows...
-                            output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
-                        else:
-                            pass
-                    for j in  os.listdir('C:\\Program Files (x86)'):
-                        if 'Git' in j:
-                            git_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
-                            output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
-                        else:
-                            pass 
-                    # If all fails ask user             
-                    if git_path == None:
-                        git_path = QFileDialog.getExistingDirectory(
-                                self.dlg,
-                                "Select git path",
-                                expanduser("~"),
-                                QFileDialog.ShowDirsOnly
-                            )
-                        output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)               
-                # git pull for Mac OSX
-                elif platform.system() == 'Darwin':
-                    for i in os.listdir('/usr/local/Cellar/'):
-                        if 'git' in i:
-                            git_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
-                                            '/' + 'bin/git'
+                # Update DC and QGIS repo
+                if self.dlg.checkBox_2.isChecked():
+                    git_path = None
+                    if platform.system() == 'Windows':
+                        # Look in both Program Files and Program Files x86
+                        for i in os.listdir('C:\\Program Files'):
+                            if 'Git' in i:
+                                git_path = 'C:\\Program Files\\' + i + '\\bin'
+                                # No single quotes allowed in the string on Windows...
+                                output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
+                            else:
+                                pass
+                        for j in  os.listdir('C:\\Program Files (x86)'):
+                            if 'Git' in j:
+                                git_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
+                                output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)
+                            else:
+                                pass 
+                        # If all fails ask user             
+                        if git_path == None:
+                            git_path = QFileDialog.getExistingDirectory(
+                                    self.dlg,
+                                    "Select git path",
+                                    expanduser("~"),
+                                    QFileDialog.ShowDirsOnly
+                                )
+                            output = sp.call('{0}\\git pull'.format(git_path), cwd=dc_directory)               
+                    # git pull for Mac OSX
+                    elif platform.system() == 'Darwin':
+                        for i in os.listdir('/usr/local/Cellar/'):
+                            if 'git' in i:
+                                git_path = '/usr/local/Cellar/' + i + '/' + os.listdir('/usr/local/Cellar/'+ i)[0] + \
+                                                '/' + 'bin/git'
+                                args = ['{0} pull'.format(git_path)]
+                                output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                            else:
+                                pass
+                        if git_path == None:
+                            git_path = QFileDialog.getExistingDirectory(
+                                    self.dlg,
+                                    "Select git path",
+                                    expanduser("~"),
+                                    QFileDialog.ShowDirsOnly
+                                )
                             args = ['{0} pull'.format(git_path)]
                             output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                    else:
+                        print 'currently the plugin only supports Mac and Windows'                    
+
+
+                # check if the path corresponds to the examples folder or not. 
+                # This is necessary due to the absolute paths of subprocess
+                chars = set("\/")
+                if any((c in chars) for c in dc_recipe):
+                    pass
+                else:
+                    dc_recipe = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe,to_save)
+
+
+                # Check for -Pclear=True
+                if self.dlg.checkBox.isChecked():
+                    p_clear = 'true'
+                else:
+                    p_clear= 'false'
+
+
+                # TODO need to add more error messages
+                if not to_save:
+                    self.iface.messageBar().pushMessage("Error", "Please choose a name for the output file", level=QgsMessageBar.CRITICAL)
+                else:
+                    if platform.system() == 'Windows':
+                        if not gradle_command in os.environ['PATH']:
+                            os.environ['PATH'] += ';' + gradle_command
                         else:
                             pass
-                    if git_path == None:
-                        git_path = QFileDialog.getExistingDirectory(
-                                self.dlg,
-                                "Select git path",
-                                expanduser("~"),
-                                QFileDialog.ShowDirsOnly
-                            )
-                        args = ['{0} pull'.format(git_path)]
-                        output = sp.Popen(args, stdout=sp.PIPE, cwd=dc_directory, shell=True)
-                else:
-                    print 'currently the plugin only supports Mac and Windows'                    
-
-
-            # check if the path corresponds to the examples folder or not. 
-            # This is necessary due to the absolute paths of subprocess
-            chars = set("\/")
-            if any((c in chars) for c in dc_recipe):
-                pass
-            else:
-                dc_recipe = '{0}/src/main/resources/executions/examples/{1}'.format(dc_directory,dc_recipe,to_save)
-
-
-            # Check for -Pclear=True
-            if self.dlg.checkBox.isChecked():
-                p_clear = 'true'
-            else:
-                p_clear= 'false'
-
-
-            # TODO need to add more error messages
-            if not to_save:
-                self.iface.messageBar().pushMessage("Error", "Please choose a name for the output file", level=QgsMessageBar.CRITICAL)
-            else:
-                if platform.system() == 'Windows':
-                    if not gradle_command in os.environ['PATH']:
-                        os.environ['PATH'] += ';' + gradle_command
+                            
+                        # No single quotes allowed in the string on Windows...
+                        output = sp.call('{0} runExport -Precipe="{2}"  -Poutput="{3}" -Pclear="{4}"'.format(gradle_command + '\\gradle.bat',
+                                                                                        dc_directory,dc_recipe,to_save, p_clear),
+                                                                                        cwd=dc_directory)
+                        # Adding the resulting layer in the QGIS Layers Panel
+                        vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
+                        QgsMapLayerRegistry.instance().addMapLayer(vlayer)   
                     else:
-                        pass
-                        
-                    # No single quotes allowed in the string on Windows...
-                    output = sp.call('{0} runExport -Precipe="{2}"  -Poutput="{3}" -Pclear="{4}"'.format(gradle_command + '\\gradle.bat',
-                                                                                    dc_directory,dc_recipe,to_save, p_clear),
-                                                                                     cwd=dc_directory)
-                    # Adding the resulting layer in the QGIS Layers Panel
-                    vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
-                    QgsMapLayerRegistry.instance().addMapLayer(vlayer)   
-                else:
-                    args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}' -Pclear='{4}'".format(gradle_command,dc_directory,
-                                                                                        dc_recipe,to_save, p_clear)]
-                    output = sp.Popen(args,stdout=sp.PIPE, cwd=dc_directory, shell=True)
-                    for log in iter(output.stdout.readline, b''):
-                        sys.stdout.write(str(log) + '\n')
+                        args = ["{0} runExport -Precipe='{2}'  -Poutput='{3}' -Pclear='{4}'".format(gradle_command,dc_directory,
+                                                                                            dc_recipe,to_save, p_clear)]
+                        output = sp.Popen(args,stdout=sp.PIPE, cwd=dc_directory, shell=True)
+                        for log in iter(output.stdout.readline, b''):
+                            sys.stdout.write(str(log) + '\n')
 
-                    progressbar = QProgressBar()
-                    progressbar.setMinimum(0)
-                    progressbar.setMaximum(0)
-                    progressbar.setValue(0)
-                    progressbar.setWindowTitle("Running gradle task...")
-                    progressbar.show()
+                        progressbar = QProgressBar()
+                        progressbar.setMinimum(0)
+                        progressbar.setMaximum(0)
+                        progressbar.setValue(0)
+                        progressbar.setWindowTitle("Running gradle task...")
+                        progressbar.show()
 
 
-                    # Adding the resulting layer in the QGIS Layers Panel
-                    vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
-                    QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
+                        # Adding the resulting layer in the QGIS Layers Panel
+                        vlayer = QgsVectorLayer(to_save,to_save.split("/")[-1],"ogr")
+                        QgsMapLayerRegistry.instance().addMapLayer(vlayer)    
 
     def on_combobox_changed(self, value):
         recipes =  self.dlg.lineEdit.text() + "/src/main/resources/executions/examples"

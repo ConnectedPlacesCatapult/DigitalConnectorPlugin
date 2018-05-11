@@ -7,16 +7,33 @@ Currently, the Digital Connector QGIS plugin has the following functionalities:
 * It allows saving the modified recipes in a seperate file
 * It allows visualising the existing/modified recipes in a UML-based format
 
+## Table of Contents:
+
+- [Current Scope](#current-scope)
+- [Requirements](#requirements)
+- [Installation](#Installation)
+- [Quick Start](#quick-start)
+- [Digital Connector](#digital-connector)
+- [License](#license) 
+
+## Current Scope
+The plugin have been tested for both Windows and Mac. Although it should be fully functional on Linux, it has not been tested for Debian based systems.
+
 NOTE - This repo is under development. There may be bugs.
-**NOTE - While this repo is under development we do not accept PRs**
+*Note: At the moment we don't provide support for contributions and pull requests.*
+
+## Requirements
+- Installation of QGIS 2.x. The plugin does not support QGIS 3
+- Intsallation of Graphviz for recipe visualisation
 
 ## Installation
-Currently the plugin is not on QGIS Python Plugins Repository. To install it:
 
+**QGIS plugin**
+Currently the plugin is not on QGIS Python Plugins Repository. To install it:
 
 * Clone the repo in /your_path_to_qgis/.qgis2/python/plugins
 
-If you are on **Windows** and sssuming you have installed QGIS2.x on your computer:
+If you are on *Windows* and assuming you have a working installation of QGIS 2.x on your computer:
 * Launch OSGeo4W Shell by typing ``osgeo4w`` in Windows finder
 ![Alt text](/img/osgeo4.png)
 * Navigate to the QGIS plugin folder by typing 
@@ -26,53 +43,75 @@ If you are on **Windows** and sssuming you have installed QGIS2.x on your comput
 ``pyrcc4 -o resources.py resources.qrc``
 ![Alt text](/img/compile.png)
 
-If you are on **Mac**
+If you are on *Mac*:
 * Compile the resources file using pyrcc4 by typing in the terminal window
-```pyrcc4 resources.py resources.qrc ```
+```pyrcc4 -o resources.py resources.qrc ```
 * Run the tests (``make test``)
 * Test the plugin by enabling it in the QGIS plugin manager
 
-## Usage
-* Open QGIS and click on the plugin manager located on the toolbar
+**Graphviz**
+If you are on *Windows*:
+* Download and install the stable version of Graphviz from ![here](https://graphviz.gitlab.io/_pages/Download/Download_windows.html). It is highly recommended that you use the default directories for the installation.
+* Download pip from ![here](https://bootstrap.pypa.io/get-pip.py)
+* Launch OSGeo4W Shell as administrator by typing ``osgeo4w`` in Windows finder and then right click on ``Run as administrator``
+![Alt text](/img/run_admin.png)
+* Navigate to *get-pip.py* file by typing ``cd path_to\get-pip.py`` in the OSGeo4W Shell.
+* Install pip by typing ``python get-pip.py`` in the OSGeo4W Shell.
+* Install graphviz by typing ``pip install graphviz`` in the OSGeo4W Shell
+
+If you are on *Mac*:
+* Install graphviz by typing ``brew install graphviz`` in the terminal window
+* If you have multiple distributions of python for your computer, find out which one corresponds to QGIS by:
+  * Launch QGIS
+  * From within QGIS locate the Python concole icon ![Alt text](/img/python_console.png). Clicking it will open Python console
+  * In the Python console type ``import sys`` following by ``print sys.executable``. The directory that comes up is the directory of QGIS Python distribution. Make a note of this (eg. /usr/bin/python)
+* Download pip from ![here](https://bootstrap.pypa.io/get-pip.py)
+* Navigate to *get-pip.py* file by typing ``cd path_to\get-pip.py`` in the terminal.
+* Install pip by typing ``the_print sys.executable_result get-pip.py`` in the terminal.
+* Install graphviz by typing ``/the_print sys.executable_result -m pip install graphviz`` in the terminal
+
+## Quick Start
+Open QGIS and click on the plugin manager located on the toolbar
 
 ![Alt text](/img/1.png)
 
-* In the popup window, type **Digital Connector Plugin** and enable the plugin by clicking on the checkbox next to it
+In the popup window, type **Digital Connector Plugin** and enable the plugin by clicking on the checkbox next to it
 
 ![Alt text](/img/2.png)
-
-* In the main plugin window, browse to the local copy of Tombolo Digital Connector by clicking ``...``
+In the main plugin window, browse to the local copy of Tombolo Digital Connector by clicking ``...``
 
 ![Alt text](/img/3.png)
 
-* All existing recipes in the Digital Connector's example folder will be loaded in a dropdown box
+All existing recipes in the Digital Connector's example folder will be loaded in a dropdown box
 
 ![Alt text](/img/5.png)
 
-* Clicking the **View recipe** button will render the UML version of the recipe. This allows the user to explore how the different subjects/datasources/fields are linked together
+Clicking the **View recipe** button will render the UML version of the recipe. This allows the user to explore how the different subjects/datasources/fields are linked together
 
 ![Alt text](/img/7.png)
 
-* By clicking the **Edit recipe** button a popup window will appear the wraps the recipe's subjects/datasources/fields in dropdown boxes 
+By clicking the **Edit recipe** button a popup window will appear the wraps the recipe's subjects/datasources/fields in dropdown boxes 
 
 ![Alt text](/img/8.png)
 
-* Expanding this allows the user to directly edit the contents of the recipe. By clicking the **Save** button the recipe can be saved locally
+Expanding this allows the user to directly edit the contents of the recipe. By clicking the **Save** button the recipe can be saved locally
 
 ![Alt text](/img/9.png)
 
-* By clicking the **Run** button the Digital Connector's command ``gradle -runExport`` is invoked.  
+By clicking the **Run** button the Digital Connector's command ``gradle -runExport`` is invoked.  
 
 ![Alt text](/img/5.png)
 
-* Once the process is complete, the output file will be loaded automatically in QGIS's Layer Panel  
+Once the process is complete, the output file will be loaded automatically in QGIS's Layer Panel  
 
 ![Alt text](/img/11.png)
 
-## What's Next:
+## Digital Connector
 
-  * Investigate the feasibility of implementing collapsable widgets for the nested field structure
-  * Further extent GUI
-  * Print terminal info on execution window
-  * ...
+- To know more about architecture of project, recipe and other components within recipe like Subject, Attribute etc, check out  [Digital Connector](https://github.com/FutureCitiesCatapult/TomboloDigitalConnector)
 
+## License
+
+[MIT](LICENSE)
+
+When using the Tombolo or other GitHub logos and artwork, be sure to follow the [GitHub logo guidelines](https://github.com/logos).
