@@ -51,8 +51,8 @@ If you are on *Mac*:
 
 **Graphviz**
 If you are on *Windows*:
-* Download and install the stable version of Graphviz from ![here](https://graphviz.gitlab.io/_pages/Download/Download_windows.html). It is highly recommended that you use the default directories for the installation.
-* Download pip from ![here](https://bootstrap.pypa.io/get-pip.py)
+* Download and install the stable version of Graphviz from [here](https://graphviz.gitlab.io/_pages/Download/Download_windows.html). It is highly recommended that you use the default directories for the installation.
+* Download pip from [here](https://bootstrap.pypa.io/get-pip.py)
 * Launch OSGeo4W Shell as administrator by typing ``osgeo4w`` in Windows finder and then right click on ``Run as administrator``
 ![Alt text](/img/run_admin.png)
 * Navigate to *get-pip.py* file by typing ``cd path_to\get-pip.py`` in the OSGeo4W Shell.
@@ -65,7 +65,7 @@ If you are on *Mac*:
   * Launch QGIS
   * From within QGIS locate the Python concole icon ![Alt text](/img/python_console.png). Clicking it will open Python console
   * In the Python console type ``import sys`` following by ``print sys.executable``. The directory that comes up is the directory of QGIS Python distribution. Make a note of this (eg. /usr/bin/python)
-* Download pip from ![here](https://bootstrap.pypa.io/get-pip.py)
+* Download pip from [here](https://bootstrap.pypa.io/get-pip.py)
 * Navigate to *get-pip.py* file by typing ``cd path_to\get-pip.py`` in the terminal.
 * Install pip by typing ``the_print sys.executable_result get-pip.py`` in the terminal.
 * Install graphviz by typing ``/the_print sys.executable_result -m pip install graphviz`` in the terminal
