@@ -114,4 +114,8 @@ Once the process is complete, the output file will be loaded automatically in QG
 
 [MIT](LICENSE)
 
+<<<<<<< HEAD
 When using the Tombolo or other GitHub logos and artwork, be sure to follow the [GitHub logo guidelines](https://github.com/logos).
+=======
+When using the Tombolo or other GitHub logos and artwork, be sure to follow the [GitHub logo guidelines](https://github.com/logos).
+>>>>>>> 9cdd3287a25b4d507f8c029dc4199536a5b85783
