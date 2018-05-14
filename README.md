@@ -23,15 +23,15 @@ NOTE - This repo is under development. There may be bugs.
 *Note: At the moment we don't provide support for contributions and pull requests.*
 
 ## Requirements
-- Installation of QGIS 2.x. The plugin does not support QGIS 3
-- Intsallation of Graphviz for recipe visualisation
+* Installation of QGIS 2.x. The plugin does not support QGIS 3. You can download QGIS 2.x from [here] (https://qgis.org/en/site/forusers/download.html). **Please make sure you choose version 2**
+* Installation of Graphviz for recipe visualisation. Detailed instruction on how to install Graphviz are included in the Installation section.
 
 ## Installation
 
 ### QGIS plugin
 Currently the plugin is not on QGIS Python Plugins Repository. To install it:
 
-* Clone the repo in /your_path_to_qgis/.qgis2/python/plugins
+* Clone this repo in /your_path_to_qgis/.qgis2/python/plugins by typing ``git clone https://github.com/FutureCitiesCatapult/DigitalConnectorPlugin.git`` either in the terminal window (Mac OSX) or the command line (Windows).
 * If the plugins folder is missing, then you have to manually create by right clicking in the /your_path_to_qgis/.qgis2/python/ directory and clicking New Folder
 * If you are on *Windows* and assuming you have a working installation of QGIS 2.x on your computer:
 * Launch OSGeo4W Shell by typing ``osgeo4w`` in Windows finder
