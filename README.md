@@ -65,11 +65,11 @@ If you are on *Mac*:
 * If you have multiple distributions of python for your computer, find out which one corresponds to QGIS by:
   * Launch QGIS
   * From within QGIS locate the Python concole icon ![Alt text](/img/python_console.png). Clicking it will open Python console
-  * In the Python console type ``import sys`` following by ``print sys.executable``. The directory that comes up is the directory of QGIS Python distribution. Make a note of this (eg. /usr/bin/python)
+  * In the Python console type ``import sys`` following by ``print sys.executable``. The directory that comes up is the directory of QGIS Python distribution. Make a note of this path (eg. /usr/bin/python)
 * Download pip from [here](https://bootstrap.pypa.io/get-pip.py)
 * Navigate to *get-pip.py* file by typing ``cd path_to\get-pip.py`` in the terminal.
-* Install pip by typing ``the_print sys.executable_result get-pip.py`` in the terminal.
-* Install graphviz by typing ``/the_print sys.executable_result -m pip install graphviz`` in the terminal
+* Install pip by typing ``<replace_it_with_python_path_obtained_above> get-pip.py`` in the terminal.
+* Install graphviz by typing ``<replace_it_with_python_path_obtained_above> -m pip install graphviz`` in the terminal
 
 ## Quick Start
 Open QGIS and click on the plugin manager located on the toolbar
