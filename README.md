@@ -33,7 +33,7 @@ Currently the plugin is not on QGIS Python Plugins Repository. To install it:
 
 * Clone the repo in /your_path_to_qgis/.qgis2/python/plugins
 * If the plugins folder is missing, then you have to manually create by right clicking in the /your_path_to_qgis/.qgis2/python/ directory and clicking New Folder
-If you are on *Windows* and assuming you have a working installation of QGIS 2.x on your computer:
+* If you are on *Windows* and assuming you have a working installation of QGIS 2.x on your computer:
 * Launch OSGeo4W Shell by typing ``osgeo4w`` in Windows finder
 ![Alt text](/img/osgeo4.png)
 * Navigate to the QGIS plugin folder by typing 
