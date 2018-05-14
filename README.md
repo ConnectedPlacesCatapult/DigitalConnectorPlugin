@@ -32,8 +32,8 @@ NOTE - This repo is under development. There may be bugs.
 Currently the plugin is not on QGIS Python Plugins Repository. To install it:
 
 * Clone the repo in /your_path_to_qgis/.qgis2/python/plugins
-
-If you are on *Windows* and assuming you have a working installation of QGIS 2.x on your computer:
+* If the plugins folder is missing, then you have to manually create by right clicking in the /your_path_to_qgis/.qgis2/python/ directory and clicking New Folder
+* If you are on *Windows* and assuming you have a working installation of QGIS 2.x on your computer:
 * Launch OSGeo4W Shell by typing ``osgeo4w`` in Windows finder
 ![Alt text](/img/osgeo4.png)
 * Navigate to the QGIS plugin folder by typing 
@@ -44,15 +44,16 @@ If you are on *Windows* and assuming you have a working installation of QGIS 2.x
 ![Alt text](/img/compile.png)
 
 If you are on *Mac*:
-* Compile the resources file using pyrcc4 by typing in the terminal window
-```pyrcc4 -o resources.py resources.qrc ```
+* Install Qt4 by typing in the terminal window ```brew install cartr/qt4/pyqt```
+* Navigate to qgis plugin folder. Usually this is ```cd ~/.qgis2/python/plugins/DigitalConnectorPlugin```
+* Compile the resources file using pyrcc4 by typing in the terminal window ```pyrcc4 -o resources.py resources.qrc ```
 * Run the tests (``make test``)
 * Test the plugin by enabling it in the QGIS plugin manager
 
 **Graphviz**
 If you are on *Windows*:
-* Download and install the stable version of Graphviz from ![here](https://graphviz.gitlab.io/_pages/Download/Download_windows.html). It is highly recommended that you use the default directories for the installation.
-* Download pip from ![here](https://bootstrap.pypa.io/get-pip.py)
+* Download and install the stable version of Graphviz from [here](https://graphviz.gitlab.io/_pages/Download/Download_windows.html). It is highly recommended that you use the default directories for the installation.
+* Download pip from [here](https://bootstrap.pypa.io/get-pip.py)
 * Launch OSGeo4W Shell as administrator by typing ``osgeo4w`` in Windows finder and then right click on ``Run as administrator``
 ![Alt text](/img/run_admin.png)
 * Navigate to *get-pip.py* file by typing ``cd path_to\get-pip.py`` in the OSGeo4W Shell.
@@ -65,7 +66,7 @@ If you are on *Mac*:
   * Launch QGIS
   * From within QGIS locate the Python concole icon ![Alt text](/img/python_console.png). Clicking it will open Python console
   * In the Python console type ``import sys`` following by ``print sys.executable``. The directory that comes up is the directory of QGIS Python distribution. Make a note of this (eg. /usr/bin/python)
-* Download pip from ![here](https://bootstrap.pypa.io/get-pip.py)
+* Download pip from [here](https://bootstrap.pypa.io/get-pip.py)
 * Navigate to *get-pip.py* file by typing ``cd path_to\get-pip.py`` in the terminal.
 * Install pip by typing ``the_print sys.executable_result get-pip.py`` in the terminal.
 * Install graphviz by typing ``/the_print sys.executable_result -m pip install graphviz`` in the terminal
@@ -114,8 +115,4 @@ Once the process is complete, the output file will be loaded automatically in QG
 
 [MIT](LICENSE)
 
-<<<<<<< HEAD
 When using the Tombolo or other GitHub logos and artwork, be sure to follow the [GitHub logo guidelines](https://github.com/logos).
-=======
-When using the Tombolo or other GitHub logos and artwork, be sure to follow the [GitHub logo guidelines](https://github.com/logos).
->>>>>>> 9cdd3287a25b4d507f8c029dc4199536a5b85783
