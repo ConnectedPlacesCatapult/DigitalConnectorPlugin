@@ -28,7 +28,7 @@ NOTE - This repo is under development. There may be bugs.
 
 ## Installation
 
-**QGIS plugin**
+### QGIS plugin
 Currently the plugin is not on QGIS Python Plugins Repository. To install it:
 
 * Clone the repo in /your_path_to_qgis/.qgis2/python/plugins
@@ -50,7 +50,7 @@ If you are on *Mac*:
 * Run the tests (``make test``)
 * Test the plugin by enabling it in the QGIS plugin manager
 
-**Graphviz**
+### Graphviz
 If you are on *Windows*:
 * Download and install the stable version of Graphviz from [here](https://graphviz.gitlab.io/_pages/Download/Download_windows.html). It is highly recommended that you use the default directories for the installation.
 * Download pip from [here](https://bootstrap.pypa.io/get-pip.py)
