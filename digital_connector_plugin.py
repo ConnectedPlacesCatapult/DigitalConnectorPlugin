@@ -284,16 +284,25 @@ class DigitalConnectorPlugin:
             # Look in both Program Files and Program Files x86
             for i in os.listdir('C:\\Program Files'):
                 if 'gradle' in i:
-                    gradle_path = 'C:\\Program Files\\' + i + '\\bin'
+                    gradle_path = 'C:\\Program Files\\' + i
+                    # Look for one more nesting
+                    if 'bin' in os.listdir(gradle_path):
+                        gradle_path = 'C:\\Program Files\\' + i + '\\bin'
+                    else:
+                        for k in os.listdir(gradle_path):
+                            if 'gradle' in k:
+                                gradle_path = 'C:\\Program Files\\' + i + '\\' + k + '\\bin'
                     return gradle_path
                 else:
-                    pass
+                    gradle_path == None
+
             for j in  os.listdir('C:\\Program Files (x86)'):
                 if 'gradle' in j:
                     gradle_path = 'C:\\Program Files (x86)\\' + j + '\\bin'
                     return gradle_path
                 else:
-                    pass              
+                    gradle_path == None
+                                  
             if gradle_path == None:
                 gradle_path = QFileDialog.getExistingDirectory(
                         self.dlg,
