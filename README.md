@@ -1,6 +1,8 @@
 # Tombolo Digital Connector QGIS plugin
 A plugin for viewing, modifying and running the Tombolo Digital Connector through QGIS. The Tombolo Digital Connector is an open source software that allows automatic fetching, cleaning and combining of spatial data from different sources and different specifications. For more information please visit [Digital Connector](https://github.com/FutureCitiesCatapult/TomboloDigitalConnector). 
 
+**Please note** This plugin requires a complete installation of the Digital Connector. 
+
 Currently, the Digital Connector QGIS plugin has the following functionalities:
 * It allows the user to run pre-build recipes without interacting with the terminal window and loads back the resulting geojson
 * It allows altering the existing recipes in a more intuitive way
@@ -23,7 +25,7 @@ NOTE - This repo is under development. There may be bugs.
 *Note: At the moment we don't provide support for contributions and pull requests.*
 
 ## Requirements
-* Installation of QGIS 2.x. The plugin does not support QGIS 3. You can download QGIS 2.x from [here] (https://qgis.org/en/site/forusers/download.html). **Please make sure you choose version 2**
+* Installation of QGIS 2.x. The plugin does not support QGIS 3. You can download QGIS 2.x from ![here] (https://qgis.org/en/site/forusers/download.html). **Please make sure you choose version 2**
 * Installation of Graphviz for recipe visualisation. Detailed instruction on how to install Graphviz are included in the Installation section.
 
 ## Installation
