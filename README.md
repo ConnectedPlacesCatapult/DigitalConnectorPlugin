@@ -26,7 +26,7 @@ NOTE - This repo is under development. There may be bugs.
 
 ## Requirements
 * Installation of the Digital Connector. This includes Java, gradle and git. In the case these are not installed in the default installation folders (eg. Program Files for Windows) the plugin will prompt the user to select the folder manually. In this case, navigate to the **\bin** folder of the software (eg. for gradle you should specify \path_to_gradle\gradle\bin) 
-* Installation of QGIS 2.x. The plugin does not support QGIS 3. You can download QGIS 2.x from ![here] (https://qgis.org/en/site/forusers/download.html). **Please make sure you choose version 2**
+* Installation of QGIS 2.x. The plugin does not support QGIS 3. You can download QGIS 2.x from [here](https://qgis.org/en/site/forusers/download.html). **Please make sure you choose version 2**
 * Installation of Graphviz for recipe visualisation. Detailed instruction on how to install Graphviz are included in the Installation section.
 
 ## Installation
