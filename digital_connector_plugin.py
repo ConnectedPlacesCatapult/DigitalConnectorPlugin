@@ -94,7 +94,7 @@ class DigitalConnectorPlugin:
             else:
                 for j in  os.listdir('C:\\Program Files (x86)'):
                     if 'Java' in j:
-                        java_path_temp = 'C:\\Program Files (x86)\\' + i 
+                        java_path_temp = 'C:\\Program Files (x86)\\' + j 
                         for k in os.listdir(java_path_temp):
                             if 'jdk' in k:
                                 java_path_temp = java_path_temp + '\\'  + k + '\\bin'
