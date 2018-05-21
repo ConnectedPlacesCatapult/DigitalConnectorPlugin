@@ -79,15 +79,15 @@ class DigitalConnectorPlugin:
         if platform.system() == 'Windows':
             java_path = None
             # Look in both Program Files and Program Files x86
-            for i in os.listdir('C:\\Program Files'):
-                if 'Java' in i:
-                    java_path_temp = 'C:\\Program Files\\' + i 
-                    for k in os.listdir(java_path_temp):
-                        if 'jdk' in k:
-                            java_path_temp = java_path_temp + '\\'  + k + '\\bin'
-                    java_path = java_path_temp
-                else:
-                    pass
+            # for i in os.listdir('C:\\Program Files'):
+            #     if 'Java' in i:
+            #         java_path_temp = 'C:\\Program Files\\' + i 
+            #         for k in os.listdir(java_path_temp):
+            #             if 'jdk' in k:
+            #                 java_path_temp = java_path_temp + '\\'  + k + '\\bin'
+            #         java_path = java_path_temp
+            #     else:
+            #         pass
 
             if java_path != None:
                 pass
